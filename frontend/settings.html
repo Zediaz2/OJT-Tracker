@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OJT Tracker — Settings</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+<div class="topbar">
+  <span class="topbar-logo">OJT Tracker</span>
+  <button class="hamburger" onclick="openSidebar()">&#9776;</button>
+</div>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">OJT <span>Tracker</span></div>
+
+    <div class="nav-section-label">Main Menu</div>
+    <nav>
+      <a href="dashboard.html" class="nav-link">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a href="dtr.html" class="nav-link">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 12"/></svg>
+        Daily Time Record
+      </a>
+      <a href="reports.html" class="nav-link">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Weekly Reports
+      </a>
+    </nav>
+
+    <div class="nav-section-label" style="margin-top:0.5rem;">Account</div>
+    <nav>
+      <a href="settings.html" class="nav-link active">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="sidebar-avatar">J</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="sidebar-name">Loading...</div>
+          <div class="sidebar-user-role">OJT Student</div>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm full-width" onclick="logoutUser()">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Home <span class="breadcrumb-sep"> / </span><span>Settings</span></div>
+        <h1>Settings</h1>
+        <p>Manage your OJT configuration and account preferences.</p>
+      </div>
+    </div>
+
+    <div id="settings-status" class="alert hidden" style="max-width:680px;"></div>
+
+    <!-- OJT Configuration -->
+    <div class="card" style="margin-bottom:1.25rem; max-width:680px;">
+      <div class="card-header">
+        <div class="card-title">OJT Configuration</div>
+      </div>
+
+      <div class="settings-item">
+        <div>
+          <div class="settings-item-label">Company / Organization</div>
+          <div class="settings-item-desc">The organization where you are currently completing your internship.</div>
+        </div>
+        <div class="settings-item-control">
+          <input type="text" id="set-company" placeholder="e.g. ABC Corporation"
+            style="width:100%; padding:0.6rem 0.875rem; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:0.875rem; outline:none; font-family:inherit; transition:var(--transition);"
+            onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+        </div>
+      </div>
+
+      <div class="settings-item">
+        <div>
+          <div class="settings-item-label">Required OJT Hours</div>
+          <div class="settings-item-desc">Total number of hours required to complete your internship program.</div>
+        </div>
+        <div class="settings-item-control">
+          <input type="number" id="set-hours" placeholder="e.g. 600" min="1" max="2000"
+            style="width:100%; padding:0.6rem 0.875rem; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:0.875rem; outline:none; font-family:inherit; transition:var(--transition);"
+            onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Information -->
+    <div class="card" style="margin-bottom:1.5rem; max-width:680px;">
+      <div class="card-header">
+        <div class="card-title">Profile Information</div>
+      </div>
+
+      <div class="settings-item">
+        <div>
+          <div class="settings-item-label">Full Name</div>
+          <div class="settings-item-desc">Your registered name. Contact your administrator to update.</div>
+        </div>
+        <div class="settings-item-control">
+          <input type="text" id="set-name" disabled
+            style="width:100%; padding:0.6rem 0.875rem; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:0.875rem; background:var(--bg); color:var(--text-muted); font-family:inherit;"/>
+        </div>
+      </div>
+
+      <div class="settings-item">
+        <div>
+          <div class="settings-item-label">Email Address</div>
+          <div class="settings-item-desc">Used to authenticate your account.</div>
+        </div>
+        <div class="settings-item-control">
+          <input type="email" id="set-email" disabled
+            style="width:100%; padding:0.6rem 0.875rem; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:0.875rem; background:var(--bg); color:var(--text-muted); font-family:inherit;"/>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-lg" onclick="saveSettings()">Save Changes</button>
+  </main>
+</div>
+
+<script src="js/auth.js"></script>
+<script>
+  const user = getUser();
+  document.getElementById('sidebar-name').textContent   = user.name;
+  document.getElementById('sidebar-avatar').textContent = user.name.charAt(0).toUpperCase();
+
+  const settings = JSON.parse(localStorage.getItem('ojt_settings') || '{}');
+  document.getElementById('set-company').value = settings.company        || user.company        || '';
+  document.getElementById('set-hours').value   = settings.required_hours || user.required_hours || 600;
+  document.getElementById('set-name').value    = user.name;
+  document.getElementById('set-email').value   = user.email;
+
+  function saveSettings() {
+    const company  = document.getElementById('set-company').value.trim();
+    const hours    = parseInt(document.getElementById('set-hours').value);
+    const statusEl = document.getElementById('settings-status');
+
+    if (!company || !hours || hours < 1) {
+      showAlert(statusEl, 'Please fill in all required fields correctly.', 'error'); return;
+    }
+
+    localStorage.setItem('ojt_settings', JSON.stringify({ company, required_hours: hours }));
+    showAlert(statusEl, 'Settings saved successfully.', 'success');
+    setTimeout(() => statusEl.classList.add('hidden'), 3000);
+  }
+
+  function openSidebar()  { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebar-overlay').classList.add('show'); }
+  function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('show'); }
+</script>
+</body>
+</html>

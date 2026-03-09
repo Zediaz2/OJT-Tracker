@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OJT Tracker — Weekly Reports</title>
+  <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    /* Form panel — hidden by default, shown via JS */
+    .report-form-wrap {
+      display: none;
+      margin-bottom: 1.25rem;
+      animation: fadeIn 0.2s ease;
+    }
+    .report-form-wrap.open { display: block; }
+
+    /* Export button */
+    .btn-export {
+      background: #fff;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: inherit;
+    }
+    .btn-export:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+    .report-week-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    /* Print styles for PDF export */
+    @media print {
+      .sidebar, .topbar, .page-header, #reports-list,
+      .modal-overlay, .btn-export, .sidebar-overlay { display: none !important; }
+      .main { margin-left: 0 !important; padding: 0 !important; }
+      body { background: white; }
+      #pdf-print-area {
+        display: block !important;
+        padding: 1.5cm 2cm;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        color: #000;
+      }
+      .pdf-doc-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        border-bottom: 2px solid #0f172a;
+        padding-bottom: 0.75rem;
+        margin-bottom: 1.5rem;
+      }
+      .pdf-doc-title { font-size: 16pt; font-weight: 700; color: #0f172a; }
+      .pdf-doc-meta  { font-size: 9pt; color: #555; text-align: right; line-height: 1.6; }
+      .pdf-entry {
+        page-break-inside: avoid;
+        margin-bottom: 1.25rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-left: 3px solid #2563eb;
+        border-radius: 4px;
+      }
+      .pdf-entry-title { font-size: 11pt; font-weight: 700; margin-bottom: 0.2rem; }
+      .pdf-entry-dates { font-size: 8.5pt; color: #2563eb; font-weight: 600; margin-bottom: 0.5rem; }
+      .pdf-entry-body  { font-size: 9.5pt; line-height: 1.65; color: #334155; white-space: pre-wrap; }
+      .pdf-entry-submitted { font-size: 8pt; color: #94a3b8; margin-top: 0.5rem; }
+      .pdf-footer {
+        margin-top: 2rem;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 0.5rem;
+        font-size: 8pt;
+        color: #94a3b8;
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+<div class="topbar">
+  <span class="topbar-logo">OJT Tracker</span>
+  <button class="hamburger" onclick="openSidebar()">&#9776;</button>
+</div>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">OJT <span>Tracker</span></div>
+
+    <div class="nav-section-label">Main Menu</div>
+    <nav>
+      <a href="dashboard.html" class="nav-link">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a href="dtr.html" class="nav-link">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 12"/></svg>
+        Daily Time Record
+      </a>
+      <a href="reports.html" class="nav-link active">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Weekly Reports
+      </a>
+    </nav>
+
+    <div class="nav-section-label" style="margin-top:0.5rem;">Account</div>
+    <nav>
+      <a href="settings.html" class="nav-link">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar" id="sidebar-avatar">J</div>
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="sidebar-name">Loading...</div>
+          <div class="sidebar-user-role">OJT Student</div>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm full-width" onclick="logoutUser()">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page-header">
+      <div class="page-header-left">
+        <div class="breadcrumb">Home <span class="breadcrumb-sep"> / </span><span>Weekly Reports</span></div>
+        <h1>Weekly Reports</h1>
+        <p>Document your weekly activities, accomplishments, and learnings.</p>
+      </div>
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+        <button class="btn-export" onclick="exportPDF()" id="export-btn" style="display:none;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Export PDF
+        </button>
+        <button class="btn btn-primary" onclick="toggleForm()">New Report</button>
+      </div>
+    </div>
+
+    <!-- Submission Form (hidden until toggled) -->
+    <div class="card report-form-wrap" id="report-form">
+      <div class="card-header">
+        <div class="card-title">Submit Weekly Journal</div>
+        <button class="btn btn-outline btn-sm" onclick="toggleForm()">Cancel</button>
+      </div>
+      <div id="report-status" class="alert hidden"></div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Week Start Date</label>
+          <input type="date" id="week_start"/>
+        </div>
+        <div class="form-group">
+          <label>Week End Date</label>
+          <input type="date" id="week_end"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Report Title</label>
+        <input type="text" id="report_title" placeholder="e.g. Week 3 — Frontend Development"/>
+      </div>
+      <div class="form-group">
+        <label>Activities and Accomplishments</label>
+        <textarea id="report_desc" rows="5"
+          placeholder="Describe your tasks, accomplishments, and key learnings this week..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Documentation Images <span style="font-weight:400; color:var(--text-muted); text-transform:none; letter-spacing:0;">(Optional)</span></label>
+        <div class="file-upload-area" onclick="document.getElementById('report_images').click()">
+          <input type="file" id="report_images" multiple accept=".jpg,.jpeg,.png,.webp"/>
+          <div class="file-upload-icon">&#128206;</div>
+          <div class="file-upload-text">
+            <strong>Click to attach images</strong><br/>
+            JPG, PNG, WEBP — multiple files supported
+          </div>
+        </div>
+        <div id="image-preview" class="image-preview-grid"></div>
+      </div>
+      <div style="display:flex; gap:0.75rem;">
+        <button class="btn btn-primary" onclick="submitReport()">Submit Report</button>
+        <button class="btn btn-outline" onclick="toggleForm()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Reports List -->
+    <div id="reports-list">
+      <div class="empty-state card">
+        <div class="empty-state-icon">&#128196;</div>
+        <h3>No reports submitted yet</h3>
+        <p>Click "New Report" to create your first weekly journal entry.</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Lightbox -->
+<div class="modal-overlay hidden" id="lightbox" onclick="closeLightbox()">
+  <img class="modal-img" id="lightbox-img" src="" alt="preview"/>
+</div>
+
+<!-- PDF print area (populated by exportPDF, printed via window.print) -->
+<div id="pdf-print-area" style="display:none;"></div>
+
+<script src="js/auth.js"></script>
+<script src="js/reports.js"></script>
+<script>
+  function openSidebar()  { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebar-overlay').classList.add('show'); }
+  function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('show'); }
+  function closeLightbox() { document.getElementById('lightbox').classList.add('hidden'); }
+</script>
+</body>
+</html>
