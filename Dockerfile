@@ -1,7 +1,8 @@
 FROM php:8.2-apache
 
-# Enable Apache mod_rewrite
-RUN a2enmod rewrite
+# Enable Apache mod_rewrite and explicitly fix MPM module configurations for Railway
+RUN a2dismod mpm_event mpm_worker || true \
+    && a2enmod mpm_prefork rewrite
 
 # Install SQLite dependencies
 RUN apt-get update && apt-get install -y libsqlite3-dev \
