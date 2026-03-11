@@ -10,6 +10,7 @@ $week_start    = trim($data['week_start']     ?? '');
 $week_end      = trim($data['week_end']       ?? '');
 $title         = trim($data['title']          ?? '');
 $description   = trim($data['description']    ?? '');
+$working_hours = floatval($data['working_hours'] ?? 0);
 $remove_images = $data['remove_images']       ?? [];  // array of file_path values e.g. "uploads/img_xxx.jpg"
 
 // ── Validation ────────────────────────────────────────────
@@ -36,9 +37,9 @@ $check->close();
 
 // ── Update main record ────────────────────────────────────
 $upd = $conn->prepare(
-    "UPDATE weekly_reports SET week_start = ?, week_end = ?, title = ?, description = ? WHERE id = ? AND user_id = ?"
+    "UPDATE weekly_reports SET week_start = ?, week_end = ?, title = ?, description = ?, working_hours = ? WHERE id = ? AND user_id = ?"
 );
-$upd->bind_param("ssssii", $week_start, $week_end, $title, $description, $report_id, $user_id);
+$upd->bind_param("ssssdii", $week_start, $week_end, $title, $description, $working_hours, $report_id, $user_id);
 if (!$upd->execute()) {
     echo json_encode(['success' => false, 'error' => 'Failed to update report: ' . $conn->error]);
     exit;
