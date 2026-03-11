@@ -728,7 +728,6 @@ body {
   line-height: 1.5;
 }
 .accomplishments-box {
-  border: 0.75pt solid #888;
   padding: 7pt 9pt;
   font-size: 9pt;
   line-height: 1.7;
