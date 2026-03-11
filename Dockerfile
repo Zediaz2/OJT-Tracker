@@ -33,6 +33,10 @@ if [ ! -f /var/www/html/database/ojt_tracker.sqlite ]; then\n\
     chown www-data:www-data /var/www/html/database/ojt_tracker.sqlite\n\
     chmod 664 /var/www/html/database/ojt_tracker.sqlite\n\
 fi\n\
+rm -f /etc/apache2/mods-enabled/mpm_event.load\n\
+rm -f /etc/apache2/mods-enabled/mpm_event.conf\n\
+rm -f /etc/apache2/mods-enabled/mpm_worker.load\n\
+rm -f /etc/apache2/mods-enabled/mpm_worker.conf\n\
 exec apache2-foreground\n\
 ' > /usr/local/bin/entrypoint.sh \
     && chmod +x /usr/local/bin/entrypoint.sh
