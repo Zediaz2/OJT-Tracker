@@ -6,15 +6,36 @@ const sa = document.getElementById('sidebar-avatar');
 if (sn) sn.textContent = user.name;
 if (sa) sa.textContent = user.name.charAt(0).toUpperCase();
 
+// ── 12-hour time formatter ──
+// Input: "HH:MM" or "HH:MM:SS" string  →  "h:MM:SS AM/PM"
+function to12hr(timeStr, showSeconds = false) {
+  if (!timeStr) return '—';
+  const parts = timeStr.split(':');
+  let h   = parseInt(parts[0], 10);
+  const m = parts[1] || '00';
+  const s = parts[2] || '00';
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return showSeconds
+    ? `${h}:${m}:${s} ${ampm}`
+    : `${h}:${m} ${ampm}`;
+}
+
 // ── Live Clock ──
 function updateClock() {
-  const now = new Date();
-  const hh  = String(now.getHours()).padStart(2, '0');
-  const mm  = String(now.getMinutes()).padStart(2, '0');
-  const ss  = String(now.getSeconds()).padStart(2, '0');
+  const now  = new Date();
+  let   h    = now.getHours();
+  const mm   = String(now.getMinutes()).padStart(2, '0');
+  const ss   = String(now.getSeconds()).padStart(2, '0');
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  const hh = String(h).padStart(2, '0');
+
   const clockEl = document.getElementById('live-clock');
   if (clockEl) {
-    clockEl.innerHTML = `${hh}<span class="dtr-clock-sep">:</span>${mm}<span class="dtr-clock-sep">:</span>${ss}`;
+    clockEl.innerHTML =
+      `${hh}<span class="dtr-clock-sep">:</span>${mm}<span class="dtr-clock-sep">:</span>${ss}` +
+      `<span style="font-size:0.45em; font-weight:700; margin-left:6px; letter-spacing:0.05em; vertical-align:middle;">${ampm}</span>`;
   }
   const dateEl = document.getElementById('today-date');
   if (dateEl) dateEl.textContent = now.toLocaleDateString('en-US', {
@@ -84,7 +105,7 @@ function timeIn() {
   .then(data => {
     const el = document.getElementById('dtr-status');
     if (data.success) {
-      showAlert(el, `✓ Time In recorded at ${data.time_in}`, 'success');
+      showAlert(el, `✓ Time In recorded at ${to12hr(data.time_in)}`, 'success');
       updateBreakPill(null);
       loadDTR();
     } else {
@@ -335,8 +356,8 @@ function loadDTR() {
         <tr style="animation: fadeUp 0.3s ease ${i * 0.04}s both;">
           <td style="color:var(--text-muted); font-size:0.78rem; font-weight:600;">${data.records.length - i}</td>
           <td style="font-weight:700;">${r.date}</td>
-          <td>${r.time_in  || '—'}</td>
-          <td>${r.time_out || '—'}</td>
+          <td>${r.time_in  ? to12hr(safeTimeIn)  : '—'}</td>
+          <td>${r.time_out ? to12hr(safeTimeOut) : '—'}</td>
           <td>${breakDisplay}</td>
           <td>${hoursDisplay}</td>
           <td>${statusDisplay}</td>
