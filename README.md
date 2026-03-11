@@ -1,72 +1,35 @@
-# OJT Tracker — Student Internship Monitoring System
+# OJT Tracker — Internship Monitoring System
 
-A web-based system for OJT (On-the-Job Training) students to track daily attendance, submit weekly journal reports, and monitor internship progress. Built with plain HTML, CSS, JavaScript, PHP, and MySQL — designed to run locally on XAMPP.
+A locally-hosted web application for tracking OJT (On-the-Job Training) attendance and weekly journal reports. Built with vanilla HTML/CSS/JavaScript on the frontend and PHP + MySQL (XAMPP) on the backend.
 
 ---
 
 ## Table of Contents
 
-1. [Project Overview](#project-overview)
-2. [Features](#features)
-3. [Technology Stack](#technology-stack)
-4. [Project Structure](#project-structure)
-5. [Database Schema](#database-schema)
-6. [Setup & Installation](#setup--installation)
-7. [Default Login Credentials](#default-login-credentials)
-8. [API Endpoints](#api-endpoints)
-9. [File Upload Configuration](#file-upload-configuration)
-10. [PDF Export](#pdf-export)
-11. [Troubleshooting](#troubleshooting)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Database Setup](#database-setup)
+- [Installation](#installation)
+- [Features](#features)
+  - [Authentication](#authentication)
+  - [Dashboard](#dashboard)
+  - [Daily Time Record (DTR)](#daily-time-record-dtr)
+  - [Weekly Reports & Journal Export](#weekly-reports--journal-export)
+  - [Settings](#settings)
+- [Migration Scripts](#migration-scripts)
+- [Default Credentials](#default-credentials)
 
 ---
 
-## Project Overview
+## Tech Stack
 
-OJT Tracker is a lightweight, locally-hosted internship monitoring system intended for students undergoing their On-the-Job Training. It provides a structured way to log daily attendance, write weekly journal entries, attach documentation images, and track overall progress toward the required internship hours.
-
-The system is built to be simple, beginner-friendly, and easy to expand for future development.
-
----
-
-## Features
-
-### Authentication
-- Secure login with bcrypt password hashing
-- Session-based authentication via PHP
-- Registration for new student accounts
-- Protected pages — redirects to login if not authenticated
-
-### Daily Time Record (DTR)
-- One-click Time In and Time Out with live clock display
-- Automatic total hours calculation per day
-- Prevents duplicate Time In entries for the same date
-- Manual entry form for adding past attendance records
-- Full attendance history table with status indicators
-
-### Weekly Reports
-- Submit weekly journal entries with title and description
-- Upload multiple documentation images per report (JPG, PNG, WEBP)
-- Image preview before submission
-- Lightbox viewer for uploaded images
-- Export all reports to PDF via browser print dialog
-
-### Dashboard
-- Overview of company, hours rendered, required hours, and reports submitted
-- Visual progress bar showing completion percentage toward required OJT hours
-- Recent attendance table (last 5 records)
-- Settings page to configure company name and required hours
-
----
-
-## Technology Stack
-
-| Layer    | Technology          |
-|----------|---------------------|
-| Frontend | HTML5, CSS3, JavaScript (Vanilla) |
-| Backend  | PHP 7.4+            |
-| Database | MySQL 5.7+ / MariaDB |
-| Server   | Apache (via XAMPP)  |
-| Storage  | Local filesystem (uploaded images) |
+| Layer      | Technology                          |
+|------------|-------------------------------------|
+| Frontend   | HTML5, CSS3, Vanilla JavaScript     |
+| Backend    | PHP 8+                              |
+| Database   | MySQL via XAMPP (MariaDB)           |
+| Server     | Apache (XAMPP)                      |
+| Fonts      | Plus Jakarta Sans (Google Fonts)    |
 
 ---
 
@@ -76,259 +39,291 @@ The system is built to be simple, beginner-friendly, and easy to expand for futu
 OJT-Tracker/
 │
 ├── frontend/
-│   ├── index.html            # Login & Register page
-│   ├── dashboard.html        # Main dashboard
-│   ├── dtr.html              # Daily Time Record
-│   ├── reports.html          # Weekly Reports
-│   ├── settings.html         # User settings
-│   ├── uploads/              # Uploaded report images (auto-created)
+│   ├── index.html              # Login page
+│   ├── dashboard.html          # Overview & progress stats
+│   ├── dtr.html                # Daily Time Record
+│   ├── reports.html            # Weekly Reports & Journal
+│   ├── settings.html           # User configuration & journal profile
 │   │
 │   ├── css/
-│   │   └── style.css         # Global stylesheet
+│   │   └── style.css           # Global styles, components, animations
 │   │
-│   └── js/
-│       ├── auth.js           # Authentication, API base URL, shared utilities
-│       ├── dtr.js            # DTR page logic
-│       └── reports.js        # Reports page logic
+│   ├── js/
+│   │   ├── auth.js             # Auth helpers, API base URL, showAlert()
+│   │   ├── dtr.js              # DTR clock, time in/out, break modal, table
+│   │   └── reports.js          # Reports CRUD, edit/delete modals, PDF export
+│   │
+│   └── uploads/                # User-uploaded documentation images
 │
-├── backend/
-│   ├── config/
-│   │   └── db.php            # Database connection & CORS headers
-│   │
-│   ├── auth/
-│   │   ├── login.php         # POST — authenticate user
-│   │   ├── logout.php        # GET  — destroy session
-│   │   └── register.php      # POST — create new account
-│   │
-│   ├── dtr/
-│   │   ├── time_in.php       # POST — record time in
-│   │   ├── time_out.php      # POST — record time out & compute hours
-│   │   ├── manual_entry.php  # POST — add a past DTR record
-│   │   └── get_records.php   # GET  — fetch all DTR records for a user
-│   │
-│   └── reports/
-│       ├── create_report.php # POST — create a new weekly report
-│       ├── get_reports.php   # GET  — fetch all reports with images
-│       └── upload_image.php  # POST — upload images for a report
-│
-└── database/
-    └── ojt_tracker.sql       # Full database schema + sample user
+└── backend/
+    ├── config/
+    │   └── db.php              # MySQL connection, CORS & JSON headers
+    │
+    ├── auth/
+    │   ├── login.php
+    │   ├── register.php
+    │   └── logout.php
+    │
+    ├── dtr/
+    │   ├── time_in.php
+    │   ├── time_out.php        # Accepts break_minutes, computes net hours
+    │   ├── manual_entry.php    # Past-date entry with break deduction
+    │   ├── get_records.php
+    │   ├── update_record.php   # Edit existing DTR record
+    │   └── delete_record.php   # Delete DTR record (ownership-verified)
+    │
+    └── reports/
+        ├── create_report.php   # Accepts working_hours field
+        ├── get_reports.php
+        ├── upload_image.php
+        ├── update_report.php   # Edit report + remove images
+        └── delete_report.php   # Delete report + physical image files
 ```
 
 ---
 
-## Database Schema
+## Database Setup
 
-The system uses four tables:
+### 1. Fresh Install
 
-### `users`
-Stores student account information.
+Import `ojt_tracker.sql` into phpMyAdmin:
 
-| Column | Type | Description |
-|---|---|---|
-| id | INT AUTO_INCREMENT | Primary key |
-| full_name | VARCHAR(100) | Student's full name |
-| email | VARCHAR(100) UNIQUE | Login email |
-| password | VARCHAR(255) | Bcrypt hashed password |
-| school | VARCHAR(100) | School name |
-| company | VARCHAR(100) | Internship company |
-| required_hours | INT | Total hours required (default 600) |
-| created_at | TIMESTAMP | Account creation date |
+1. Open **phpMyAdmin** → click **Import**
+2. Select `ojt_tracker.sql` → click **Go**
 
-### `dtr_records`
-Stores daily attendance entries.
+This creates the `ojt_tracker` database with all tables and a sample user.
 
-| Column | Type | Description |
-|---|---|---|
-| id | INT AUTO_INCREMENT | Primary key |
-| user_id | INT | Foreign key → users.id |
-| date | DATE | Attendance date |
-| time_in | TIME | Time in |
-| time_out | TIME | Time out |
-| total_hours | DECIMAL(4,2) | Auto-calculated hours |
+### Schema
 
-> Unique constraint on `(user_id, date)` prevents duplicate entries per day.
+```sql
+-- Users
+CREATE TABLE users (
+  id             INT AUTO_INCREMENT PRIMARY KEY,
+  full_name      VARCHAR(100) NOT NULL,
+  email          VARCHAR(100) UNIQUE NOT NULL,
+  password       VARCHAR(255) NOT NULL,
+  school         VARCHAR(100),
+  company        VARCHAR(100),
+  required_hours INT DEFAULT 600,
+  created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-### `weekly_reports`
-Stores weekly journal submissions.
+-- DTR Records
+CREATE TABLE dtr_records (
+  id            INT AUTO_INCREMENT PRIMARY KEY,
+  user_id       INT NOT NULL,
+  date          DATE NOT NULL,
+  time_in       TIME,
+  time_out      TIME,
+  break_minutes INT DEFAULT 0,
+  total_hours   DECIMAL(5,2),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  UNIQUE KEY unique_dtr (user_id, date)
+);
 
-| Column | Type | Description |
-|---|---|---|
-| id | INT AUTO_INCREMENT | Primary key |
-| user_id | INT | Foreign key → users.id |
-| week_start | DATE | Start of the week covered |
-| week_end | DATE | End of the week covered |
-| title | VARCHAR(150) | Report title |
-| description | TEXT | Activities and accomplishments |
-| submitted_at | TIMESTAMP | Submission timestamp |
+-- Weekly Reports
+CREATE TABLE weekly_reports (
+  id            INT AUTO_INCREMENT PRIMARY KEY,
+  user_id       INT NOT NULL,
+  week_start    DATE NOT NULL,
+  week_end      DATE NOT NULL,
+  title         VARCHAR(150) NOT NULL,
+  description   TEXT NOT NULL,
+  working_hours DECIMAL(6,2) NOT NULL DEFAULT 0,
+  submitted_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 
-### `report_images`
-Stores file paths for uploaded report images.
-
-| Column | Type | Description |
-|---|---|---|
-| id | INT AUTO_INCREMENT | Primary key |
-| report_id | INT | Foreign key → weekly_reports.id |
-| file_path | VARCHAR(255) | Relative path to the image file |
-| uploaded_at | TIMESTAMP | Upload timestamp |
-
----
-
-## Setup & Installation
-
-### Prerequisites
-- [XAMPP](https://www.apachefriends.org/) installed (Apache + MySQL)
-- A modern web browser (Chrome, Edge, Firefox)
-
----
-
-### Step 1 — Place Files
-
-Copy the entire `OJT-Tracker` folder into your XAMPP `htdocs` directory:
-
-```
-C:/xampp/htdocs/OJT-Tracker/
+-- Report Images
+CREATE TABLE report_images (
+  id          INT AUTO_INCREMENT PRIMARY KEY,
+  report_id   INT NOT NULL,
+  file_path   VARCHAR(255) NOT NULL,
+  uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (report_id) REFERENCES weekly_reports(id) ON DELETE CASCADE
+);
 ```
 
----
+### 2. Existing Database Migrations
 
-### Step 2 — Start XAMPP
+If you already have the database from a previous version, run these migration scripts in order via **phpMyAdmin → ojt_tracker → SQL tab**:
 
-Open the XAMPP Control Panel and start both:
-- **Apache**
-- **MySQL**
+```sql
+-- Migration 1: Add break_minutes to DTR records
+ALTER TABLE dtr_records
+ADD COLUMN break_minutes INT DEFAULT 0 AFTER time_out,
+MODIFY COLUMN total_hours DECIMAL(5,2);
 
----
-
-### Step 3 — Import the Database
-
-1. Open your browser and go to: `http://localhost/phpmyadmin`
-2. Click **New** in the left sidebar
-3. Create a database named: `ojt_tracker`
-4. Select the new database, then click the **Import** tab
-5. Choose the file: `OJT-Tracker/database/ojt_tracker.sql`
-6. Click **Go**
-
----
-
-### Step 4 — Verify the API URL
-
-Open `frontend/js/auth.js` and confirm the API base URL is correct:
-
-```javascript
-const API = 'http://localhost/OJT-Tracker/backend';
+-- Migration 2: Add working_hours to weekly reports
+ALTER TABLE weekly_reports
+ADD COLUMN working_hours DECIMAL(6,2) NOT NULL DEFAULT 0 AFTER week_end;
 ```
 
-> If your XAMPP uses a different port (e.g., 8080), update this to:
-> `http://localhost:8080/OJT-Tracker/backend`
+---
+
+## Installation
+
+1. **Install XAMPP** and start **Apache** and **MySQL**
+2. **Clone / copy** the project folder into `C:/xampp/htdocs/OJT-Tracker/`
+3. **Import the database** (see Database Setup above)
+4. **Open your browser** and navigate to:
+   ```
+   http://localhost/OJT-Tracker/frontend/index.html
+   ```
+
+> Make sure `frontend/uploads/` exists and is writable by Apache. XAMPP handles this automatically on Windows.
 
 ---
 
-### Step 5 — Open the Application
-
-Navigate to the following URL in your browser:
-
-```
-http://localhost/OJT-Tracker/frontend/index.html
-```
-
-> **Important:** Always access the app through `http://localhost/...` and not through VS Code Live Server or by opening the file directly. PHP only runs through Apache.
-
----
-
-## Default Login Credentials
-
-A sample student account is included in the database:
-
-| Field | Value |
-|---|---|
-| Email | juan@email.com |
-| Password | admin123 |
-
-You can register additional accounts directly from the login page.
-
----
-
-## API Endpoints
-
-All endpoints are located under `/OJT-Tracker/backend/`.
+## Features
 
 ### Authentication
 
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/auth/login.php` | Authenticate a user |
-| POST | `/auth/register.php` | Register a new student account |
-| GET | `/auth/logout.php` | Destroy the current session |
-
-### Daily Time Record
-
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/dtr/time_in.php` | Record today's time in |
-| POST | `/dtr/time_out.php` | Record today's time out |
-| POST | `/dtr/manual_entry.php` | Add a past attendance record |
-| GET | `/dtr/get_records.php?user_id=` | Get all DTR records for a user |
-
-### Weekly Reports
-
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/reports/create_report.php` | Create a new weekly report |
-| GET | `/reports/get_reports.php?user_id=` | Get all reports with image paths |
-| POST | `/reports/upload_image.php` | Upload images for a report |
+- Login and registration with bcrypt-hashed passwords
+- Session stored in `localStorage` as a JSON user object
+- All protected pages redirect to login if no session is found
+- `auth.js` provides `getUser()`, `logoutUser()`, and `showAlert()` shared across all pages
 
 ---
 
-## File Upload Configuration
+### Dashboard
 
-Uploaded images are saved to:
+- Displays total hours logged, remaining hours, and completion percentage
+- Animated progress bar with shimmer effect
+- Stat cards for days attended, total reports, and OJT completion status
 
+---
+
+### Daily Time Record (DTR)
+
+#### Live Clock
+- Displays current time in **12-hour format** (e.g. `8:23:45 AM`) with a blinking colon separator
+- Shows full date (e.g. `Wednesday, March 11, 2026`)
+
+#### Time In / Time Out
+- One-click Time In and Time Out buttons
+- Time Out opens a **Break Duration Modal** to deduct break time before saving
+- Break presets: 0 min, 15 min, 30 min, 60 min, or custom input (0–480 min)
+- Net hours formula: `(time_out − time_in) − break_minutes`
+- Success alerts display times in **12-hour format**
+
+#### Attendance History Table
+- Columns: `#`, `Date`, `Time In`, `Time Out`, `Break`, `Net Hours`, `Status`, `Actions`
+- Time In and Time Out displayed in **12-hour format** (e.g. `8:00 AM`, `5:01 PM`)
+- Status badge: **Complete** (green) or **In Progress** (yellow)
+
+#### Manual Entry
+- Add past attendance records with date, time in, time out, and optional break minutes
+- Validates that time out is after time in
+
+#### Edit Record
+- Pre-fills all fields in a slide-in modal
+- Re-calculates net hours on save
+
+#### Delete Record
+- Confirmation modal with record date displayed
+- Ownership-verified before deletion
+
+---
+
+### Weekly Reports & Journal Export
+
+#### Submit Report
+- Fields: Week Start, Week End, Report Title, Number of Working Hours, Weekly Accomplishments
+- Optional documentation image attachments (JPG, PNG, WEBP — multiple files)
+- Images stored in `frontend/uploads/` with unique filenames
+
+#### Report Cards
+- Each report card shows title, week range, description, attached images, and submission date
+- Action buttons per card: **Export PDF**, **Edit**, **Delete**
+- **Export All** button in the page header exports every report at once
+
+#### Edit Report
+- Slide-in modal pre-fills all fields including working hours
+- Existing images displayed as thumbnails — click **✕** to mark for removal on save (click **↩** to undo)
+- Separate file input for adding new images
+- Ownership verified on backend before any update
+
+#### Delete Report
+- Confirmation modal shows report title
+- Permanently removes the database record, `report_images` rows, and physical image files from `uploads/`
+- Ownership verified before deletion
+
+#### STI Weekly Journal PDF Export
+
+Exports a print-ready PDF that matches the **FT-CRD-167-00 Weekly Journal Template** layout:
+
+| Section | Content |
+|---|---|
+| Header | Uploaded logo (left) + Template title (right), separated by a bold border |
+| Info Table | Last Name / First Name / MI, STI Campus, Program / Year Level / Section, Host Company / Department, Schedule / Number of Working Hours |
+| Documentation | Uploaded photos displayed in a flex grid below the info table |
+| Accomplishments | Bordered text box, grows to fill available vertical space |
+| Signature | "Reviewed by:" with signature line + supervisor name; "Date" with signature line |
+| Footer | `FT-CRD-167-00 | Weekly Journal Template | Page X of Y` + submission date |
+
+- Opens in a **new browser tab** with a Print / Save as PDF toolbar
+- Print output targets **A4 portrait** paper with clean margins
+- Logo and all profile data are pulled automatically from Settings
+
+---
+
+### Settings
+
+#### OJT Configuration
+| Field | Description |
+|---|---|
+| Company / Organization | Host company name |
+| Department Assigned To | Specific team or department |
+| Required OJT Hours | Total hours required (used for dashboard progress) |
+
+#### Weekly Journal Profile
+All fields auto-fill the PDF export template — set once, used forever.
+
+| Field | Description |
+|---|---|
+| School / Organization Logo | Upload JPG/PNG/WEBP — stored as Base64 in `localStorage`, appears in PDF header |
+| Campus / School Name | Displayed in the STI Campus row |
+| Program | e.g. BSIT |
+| Year Level | e.g. 4th Year |
+| Section | e.g. IT401 |
+| Middle Initial | e.g. G. |
+| OJT Supervisor Name | Printed below the signature line |
+| Journal Template Title | Overrides the header title (default: `WEEKLY JOURNAL TEMPLATE`) |
+
+> All settings are saved to `localStorage` — no backend required.
+
+---
+
+## Migration Scripts
+
+Standalone SQL files for updating an existing database:
+
+| File | Purpose |
+|---|---|
+| `add_working_hours.sql` | Adds `working_hours` column to `weekly_reports` |
+
+Run via phpMyAdmin → select `ojt_tracker` database → SQL tab → paste and execute.
+
+---
+
+## Default Credentials
+
+| Field    | Value             |
+|----------|-------------------|
+| Email    | `juan@email.com`  |
+| Password | `admin123`        |
+
+> Change these immediately after first login in a production environment.
+
+---
+
+## API Base URL
+
+Defined once in `frontend/js/auth.js`:
+
+```js
+const API = 'http://localhost/OJT-Tracker/backend';
 ```
-frontend/uploads/
-```
 
-The folder is created automatically when the first image is uploaded. Allowed file formats are **JPG**, **PNG**, and **WEBP**.
-
-If images are not saving, check that Apache has write permissions to the `frontend/uploads/` folder.
-
----
-
-## PDF Export
-
-On the Weekly Reports page, an **Export PDF** button appears once at least one report has been submitted. Clicking it opens the browser's print dialog pre-filled with a formatted version of all your reports.
-
-To save as PDF:
-1. In the print dialog, set **Destination** to **Save as PDF**
-2. Click **Save**
-
-The PDF includes the student's name, all report entries with dates and descriptions, attachment counts, and a generation timestamp.
-
----
-
-## Troubleshooting
-
-**Login says "Invalid credentials"**
-- Make sure the database was imported correctly
-- Regenerate the password hash by creating a file at `C:/xampp/htdocs/gen_hash.php` with `<?php echo password_hash('yourpassword', PASSWORD_BCRYPT); ?>`, visiting `http://localhost/gen_hash.php`, and updating the `users` table in phpMyAdmin
-
-**405 Method Not Allowed**
-- You are accessing the app through VS Code Live Server — use `http://localhost/OJT-Tracker/frontend/index.html` instead
-
-**API calls failing / CORS errors**
-- Confirm Apache is running in XAMPP
-- Confirm the `API` variable in `auth.js` points to `http://localhost/OJT-Tracker/backend`
-
-**Images not displaying after upload**
-- Check that the `frontend/uploads/` folder exists and is writable
-- Confirm the image path in the database starts with `uploads/` and not an absolute path
-
-**Database connection failed**
-- Verify that MySQL is running in XAMPP
-- Check `backend/config/db.php` — the default credentials are `root` with an empty password, which is standard for XAMPP
-
----
-
-## License
-
-This project is intended for educational and personal use as a student internship monitoring tool.
+All pages import `auth.js` first and reference `API` for every `fetch()` call.
