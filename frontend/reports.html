@@ -263,10 +263,14 @@
         <label>Documentation Images
           <span style="font-weight:500; color:var(--text-muted); text-transform:none; letter-spacing:0;">(Optional — will appear in PDF)</span>
         </label>
-        <div class="file-upload-area" onclick="document.getElementById('report_images').click()">
+        <div class="file-upload-area" id="submit-drop-zone">
           <input type="file" id="report_images" multiple accept=".jpg,.jpeg,.png,.webp"/>
           <div class="file-upload-icon">📎</div>
-          <div class="file-upload-text"><strong>Click to attach images</strong><br/>JPG, PNG, WEBP — multiple files supported</div>
+          <div class="file-upload-text">
+            <strong>Click to attach</strong> or drag &amp; drop images here<br/>
+            <span style="font-size:0.78rem;">JPG, PNG, WEBP — images are added, not replaced</span>
+          </div>
+          <div class="file-upload-count hidden" id="submit-file-count"></div>
         </div>
         <div id="image-preview" class="image-preview-grid"></div>
       </div>
@@ -342,10 +346,14 @@
         <label>Add New Images
           <span style="font-weight:500; color:var(--text-muted); text-transform:none; letter-spacing:0;">(Optional)</span>
         </label>
-        <div class="file-upload-area" onclick="document.getElementById('edit-new-images').click()">
+        <div class="file-upload-area" id="edit-drop-zone">
           <input type="file" id="edit-new-images" multiple accept=".jpg,.jpeg,.png,.webp"/>
           <div class="file-upload-icon">📎</div>
-          <div class="file-upload-text"><strong>Click to attach new images</strong><br/>JPG, PNG, WEBP</div>
+          <div class="file-upload-text">
+            <strong>Click to attach</strong> or drag &amp; drop images here<br/>
+            <span style="font-size:0.78rem;">JPG, PNG, WEBP — images are added, not replaced</span>
+          </div>
+          <div class="file-upload-count hidden" id="edit-file-count"></div>
         </div>
         <div id="edit-new-preview" class="image-preview-grid"></div>
       </div>

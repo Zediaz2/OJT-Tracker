@@ -19,22 +19,135 @@ function openLightbox(src) {
   document.getElementById('lightbox').classList.remove('hidden');
 }
 
-// ── New-image preview (submit form) ──────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  const input = document.getElementById('report_images');
-  if (input) {
-    input.addEventListener('change', function () {
-      renderNewImagePreviews(this.files, 'image-preview', 'report_images');
-    });
-  }
+// ════════════════════════════════════════════════════════
+//  IMAGE UPLOAD — DRAG & DROP + ACCUMULATED FILE QUEUES
+// ════════════════════════════════════════════════════════
 
-  // New-image preview in edit modal
-  const editInput = document.getElementById('edit-new-images');
-  if (editInput) {
-    editInput.addEventListener('change', function () {
-      renderNewImagePreviews(this.files, 'edit-new-preview', 'edit-new-images');
-    });
+// Separate file queues — files are APPENDED, never replaced
+let submitFileQueue = [];   // for the New Report form
+let editFileQueue   = [];   // for the Edit Report modal
+
+/**
+ * De-duplicates by name+size, appends only new files to a queue,
+ * re-renders the preview grid, and updates the badge.
+ */
+function addToQueue(newFiles, queue, previewId, countId) {
+  const existing = new Set(queue.map(f => f.name + f.size));
+  Array.from(newFiles).forEach(f => {
+    if (f.type.startsWith('image/') && !existing.has(f.name + f.size)) {
+      queue.push(f);
+      existing.add(f.name + f.size);
+    }
+  });
+  renderQueue(queue, previewId, countId);
+}
+
+/**
+ * Removes a file from the queue by index and re-renders.
+ */
+function removeFromQueue(index, queue, previewId, countId) {
+  queue.splice(index, 1);
+  renderQueue(queue, previewId, countId);
+}
+
+/**
+ * Renders all queued files as thumbnail cards with a ✕ remove button.
+ */
+function renderQueue(queue, previewId, countId) {
+  const grid = document.getElementById(previewId);
+  const badge = document.getElementById(countId);
+
+  grid.innerHTML = '';
+
+  queue.forEach((file, i) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const wrap = document.createElement('div');
+      wrap.className = 'image-preview-thumb';
+
+      const img = document.createElement('img');
+      img.src = e.target.result;
+      img.title = file.name;
+      img.onclick = () => openLightbox(e.target.result);
+
+      const btn = document.createElement('button');
+      btn.className = 'preview-remove-btn';
+      btn.innerHTML = '✕';
+      btn.title = 'Remove this image';
+      btn.onclick = ev => {
+        ev.stopPropagation();
+        // re-calculate index at click time (queue may have shifted)
+        const currentIndex = queue.indexOf(file);
+        if (currentIndex !== -1) removeFromQueue(currentIndex, queue, previewId, countId);
+      };
+
+      wrap.appendChild(img);
+      wrap.appendChild(btn);
+      grid.appendChild(wrap);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Update badge
+  if (badge) {
+    if (queue.length > 0) {
+      badge.textContent = `📎 ${queue.length} image${queue.length > 1 ? 's' : ''} queued`;
+      badge.classList.remove('hidden');
+    } else {
+      badge.classList.add('hidden');
+    }
   }
+}
+
+/**
+ * Wires up a drop zone: click-to-browse + full drag & drop support.
+ */
+function initDropZone(zoneId, inputId, queue, previewId, countId) {
+  const zone  = document.getElementById(zoneId);
+  const input = document.getElementById(inputId);
+  if (!zone || !input) return;
+
+  // Click anywhere on the zone to open file picker
+  zone.addEventListener('click', () => input.click());
+
+  // File picker selection — APPEND to queue
+  input.addEventListener('change', function () {
+    if (this.files.length) {
+      addToQueue(this.files, queue, previewId, countId);
+      this.value = ''; // reset so same file can be re-added after removal
+    }
+  });
+
+  // Drag events
+  zone.addEventListener('dragenter', e => {
+    e.preventDefault(); e.stopPropagation();
+    zone.classList.add('drag-over');
+  });
+  zone.addEventListener('dragover', e => {
+    e.preventDefault(); e.stopPropagation();
+    e.dataTransfer.dropEffect = 'copy';
+    zone.classList.add('drag-over');
+  });
+  zone.addEventListener('dragleave', e => {
+    e.preventDefault(); e.stopPropagation();
+    // Only remove class if leaving the zone entirely (not a child element)
+    if (!zone.contains(e.relatedTarget)) {
+      zone.classList.remove('drag-over');
+    }
+  });
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); e.stopPropagation();
+    zone.classList.remove('drag-over');
+    if (e.dataTransfer.files.length) {
+      addToQueue(e.dataTransfer.files, queue, previewId, countId);
+    }
+  });
+}
+
+// ── Initialise both zones on DOM ready ───────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  initDropZone('submit-drop-zone', 'report_images',  submitFileQueue, 'image-preview',   'submit-file-count');
+  initDropZone('edit-drop-zone',   'edit-new-images', editFileQueue,   'edit-new-preview', 'edit-file-count');
 
   // Close modals on overlay click
   document.getElementById('edit-modal-overlay').addEventListener('click', function(e) {
@@ -46,21 +159,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loadReports();
 });
-
-function renderNewImagePreviews(files, previewId, inputId) {
-  const preview = document.getElementById(previewId);
-  preview.innerHTML = '';
-  Array.from(files).forEach(file => {
-    const reader = new FileReader();
-    reader.onload = e => {
-      const img = document.createElement('img');
-      img.src = e.target.result;
-      img.onclick = () => openLightbox(e.target.result);
-      preview.appendChild(img);
-    };
-    reader.readAsDataURL(file);
-  });
-}
 
 // ════════════════════════════════════════════════════════
 //  SUBMIT NEW REPORT
@@ -90,7 +188,7 @@ function submitReport() {
     if (!data.success) { showAlert(statusEl, data.error, 'error'); return; }
 
     const report_id = data.report_id;
-    const files     = document.getElementById('report_images').files;
+    const files     = submitFileQueue;   // use accumulated queue
 
     if (!files.length) {
       showAlert(statusEl, '✓ Report submitted successfully.', 'success');
@@ -99,7 +197,7 @@ function submitReport() {
 
     const formData = new FormData();
     formData.append('report_id', report_id);
-    Array.from(files).forEach(f => formData.append('images[]', f));
+    files.forEach(f => formData.append('images[]', f));
 
     fetch(`${API}/reports/upload_image.php`, { method: 'POST', body: formData })
       .then(r => r.json())
@@ -115,7 +213,9 @@ function clearForm() {
   ['week_start','week_end','report_title','report_hours','report_desc','report_images'].forEach(id => {
     document.getElementById(id).value = '';
   });
+  submitFileQueue.length = 0;
   document.getElementById('image-preview').innerHTML = '';
+  document.getElementById('submit-file-count').classList.add('hidden');
   document.getElementById('report-form').classList.remove('open');
 }
 
@@ -200,15 +300,17 @@ function loadReports() {
           </div>
 
           <!-- Description -->
-          <p style="color:var(--text-muted); line-height:1.7; font-size:0.875rem; margin-bottom:${r.images && r.images.length ? '0.75rem' : '0'}">${r.description}</p>
+          <p style="color:var(--text-muted); line-height:1.7; font-size:0.875rem; margin-bottom:${r.images && r.images.length ? '0.75rem' : '0'}; white-space:pre-wrap; word-break:break-word; overflow-wrap:break-word;">${r.description}</p>
 
           <!-- Images -->
           ${r.images && r.images.length ? `
             <div class="image-preview-grid" style="margin-bottom:0.75rem;">
               ${r.images.map(img => `
-                <img src="http://localhost/OJT-Tracker/frontend/${img}"
-                     alt="documentation" onclick="openLightbox(this.src)"
-                     onerror="this.style.display='none'"/>
+                <div class="image-preview-thumb">
+                  <img src="http://localhost/OJT-Tracker/frontend/${img}"
+                       alt="documentation" onclick="openLightbox(this.src)"
+                       onerror="this.parentElement.style.display='none'"/>
+                </div>
               `).join('')}
             </div>` : ''}
 
@@ -269,6 +371,7 @@ function openEditModal(index) {
   if (!r) return;
 
   editImagesToRemove = [];
+  editFileQueue.length = 0;
 
   document.getElementById('edit-report-id').value    = r.id;
   document.getElementById('edit-week-start').value   = r.week_start;
@@ -278,6 +381,7 @@ function openEditModal(index) {
   document.getElementById('edit-desc').value         = r.description;
   document.getElementById('edit-new-images').value   = '';
   document.getElementById('edit-new-preview').innerHTML = '';
+  document.getElementById('edit-file-count').classList.add('hidden');
   document.getElementById('edit-status').classList.add('hidden');
 
   const btn = document.getElementById('edit-save-btn');
@@ -312,6 +416,9 @@ function closeEditModal() {
   document.getElementById('edit-modal-overlay').classList.remove('open');
   document.body.style.overflow = '';
   editImagesToRemove = [];
+  editFileQueue.length = 0;
+  document.getElementById('edit-new-preview').innerHTML = '';
+  document.getElementById('edit-file-count').classList.add('hidden');
 }
 
 function toggleRemoveImage(imgPath) {
@@ -380,8 +487,8 @@ function saveEditReport() {
       btn.textContent = 'Save Changes'; btn.disabled = false; return;
     }
 
-    // Step 2 — upload new images (if any)
-    const newFiles = document.getElementById('edit-new-images').files;
+    // Step 2 — upload new images from the queue (if any)
+    const newFiles = editFileQueue;
     if (!newFiles.length) {
       showAlert(statusEl, '✓ Report updated successfully.', 'success');
       setTimeout(() => { closeEditModal(); loadReports(); }, 900);
@@ -390,7 +497,7 @@ function saveEditReport() {
 
     const formData = new FormData();
     formData.append('report_id', id);
-    Array.from(newFiles).forEach(f => formData.append('images[]', f));
+    newFiles.forEach(f => formData.append('images[]', f));
 
     fetch(`${API}/reports/upload_image.php`, { method: 'POST', body: formData })
       .then(r => r.json())
@@ -699,12 +806,15 @@ body {
   gap: 5pt;
 }
 .doc-photo {
-  width: 120pt;
-  height: 80pt;
+  width: 100pt;
+  height: 70pt;
+  max-width: calc(33.33% - 4pt); /* max 3 per row, never overflow */
   object-fit: cover;
+  object-position: center;
   border: 0.75pt solid #bbb;
   border-radius: 2pt;
   display: block;
+  flex-shrink: 0;
 }
 
 /* ── Accomplishments ── */

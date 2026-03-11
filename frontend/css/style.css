@@ -1190,24 +1190,93 @@ nav { padding: 0 0.75rem; }
   cursor: pointer;
   transition: var(--transition);
   background: var(--bg-subtle);
+  position: relative;
+  user-select: none;
 }
-.file-upload-area:hover { border-color: var(--primary); background: var(--primary-light); }
+.file-upload-area:hover  { border-color: var(--primary); background: var(--primary-light); }
+.file-upload-area.drag-over {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+  transform: scale(1.01);
+}
 .file-upload-area input[type="file"] { display: none; }
-.file-upload-icon { font-size: 1.6rem; margin-bottom: 0.5rem; opacity: 0.45; }
+.file-upload-icon { font-size: 1.6rem; margin-bottom: 0.5rem; opacity: 0.45; transition: var(--transition); }
+.file-upload-area.drag-over .file-upload-icon { opacity: 1; transform: scale(1.2); }
 .file-upload-text { font-size: 0.82rem; color: var(--text-muted); }
 .file-upload-text strong { color: var(--primary); }
+.file-upload-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--primary-light);
+  border: 1px solid var(--primary-glow);
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+}
+.file-upload-count.hidden { display: none; }
 
 /* ── Image Previews ── */
 .image-preview-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
-.image-preview-grid img {
-  width: 84px; height: 84px;
+
+/* Bare <img> inside the grid (report card view — no thumb wrapper) */
+.image-preview-grid > img {
+  width: 84px;
+  height: 84px;
   object-fit: cover;
+  object-position: center;
   border-radius: var(--radius-sm);
   border: 1.5px solid var(--border);
   cursor: pointer;
   transition: var(--transition);
+  flex-shrink: 0;
+  display: block;
 }
-.image-preview-grid img:hover { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-glow); transform: scale(1.04); }
+.image-preview-grid > img:hover { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-glow); transform: scale(1.04); }
+
+.image-preview-thumb {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  flex-shrink: 0;
+}
+.image-preview-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  transition: var(--transition);
+  display: block;
+}
+.image-preview-thumb img:hover { border-color: var(--primary); box-shadow: 0 0 0 2px var(--primary-glow); transform: scale(1.04); }
+.preview-remove-btn {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 20px;
+  height: 20px;
+  background: rgba(220,38,38,0.9);
+  border: none;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: var(--transition);
+  z-index: 2;
+}
+.preview-remove-btn:hover { background: #b91c1c; transform: scale(1.15); }
 
 /* ============================================================
    SETTINGS PAGE
