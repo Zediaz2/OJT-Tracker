@@ -3,7 +3,8 @@ const API = 'http://localhost/OJT-Tracker/backend';
 
 function getUser() {
   const u = localStorage.getItem('ojt_user');
-  return u ? JSON.parse(u) : null;
+  if (!u) return null;
+  return JSON.parse(u);
 }
 
 function logoutUser() {

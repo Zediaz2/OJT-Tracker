@@ -5,34 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>OJT Tracker — Sign In</title>
   <link rel="stylesheet" href="css/style.css"/>
-  <style>
-    .login-page { display:flex; min-height:100vh; background:#f8fafc; }
-    .login-brand {
-      flex:1; background:#0f172a; display:flex; flex-direction:column;
-      justify-content:center; padding:4rem; position:relative; overflow:hidden;
-    }
-    .login-brand::before {
-      content:''; position:absolute; width:400px; height:400px;
-      background:rgba(37,99,235,0.1); border-radius:50%; top:-100px; right:-100px;
-    }
-    .login-brand::after {
-      content:''; position:absolute; width:250px; height:250px;
-      background:rgba(37,99,235,0.07); border-radius:50%; bottom:80px; left:-60px;
-    }
-    .brand-logo { font-size:1.1rem; font-weight:700; color:#f1f5f9; margin-bottom:3rem; position:relative; z-index:1; }
-    .brand-logo span { color:#60a5fa; }
-    .brand-headline { font-size:1.9rem; font-weight:700; color:#f1f5f9; line-height:1.3; letter-spacing:-0.03em; margin-bottom:0.9rem; position:relative; z-index:1; }
-    .brand-sub { font-size:0.875rem; color:#64748b; line-height:1.7; max-width:320px; position:relative; z-index:1; }
-    .brand-features { margin-top:2.5rem; display:flex; flex-direction:column; gap:0.7rem; position:relative; z-index:1; }
-    .brand-feature { display:flex; align-items:center; gap:0.7rem; font-size:0.8rem; color:#94a3b8; }
-    .brand-dot { width:5px; height:5px; background:#2563eb; border-radius:50%; flex-shrink:0; }
-    .login-form-panel { width:460px; flex-shrink:0; background:#fff; display:flex; flex-direction:column; box-shadow:-4px 0 24px rgba(0,0,0,0.06); }
-    .login-form-content { flex:1; padding:2.5rem; display:flex; flex-direction:column; justify-content:center; }
-    .form-title { font-size:1.15rem; font-weight:700; color:#0f172a; margin-bottom:0.25rem; }
-    .form-sub { font-size:0.8rem; color:#64748b; margin-bottom:1.75rem; }
-    .auth-footer-bar { padding:1rem 2.5rem; font-size:0.75rem; color:#94a3b8; border-top:1px solid #f1f5f9; }
-    @media(max-width:768px){ .login-brand{display:none;} .login-form-panel{width:100%;} .login-form-content{padding:2rem 1.5rem;} }
-  </style>
 </head>
 <body>
 <div class="login-page">
@@ -41,11 +13,11 @@
   <div class="login-brand">
     <div class="brand-logo">OJT <span>Tracker</span></div>
     <div class="brand-headline">Monitor Your<br/>Internship Progress</div>
-    <div class="brand-sub">A structured system for OJT students to track daily attendance, submit weekly reports, and document their internship experience.</div>
+    <div class="brand-sub">A structured system for OJT students to track daily attendance, submit weekly reports, and document their internship journey.</div>
     <div class="brand-features">
-      <div class="brand-feature"><div class="brand-dot"></div>Daily Time Record with automatic computation</div>
+      <div class="brand-feature"><div class="brand-dot"></div>Daily Time Record with automatic hour computation</div>
+      <div class="brand-feature"><div class="brand-dot"></div>Break-time deduction for accurate net hours</div>
       <div class="brand-feature"><div class="brand-dot"></div>Weekly journal submissions with image attachments</div>
-      <div class="brand-feature"><div class="brand-dot"></div>Real-time progress toward required OJT hours</div>
     </div>
   </div>
 
@@ -68,13 +40,11 @@
           <div class="input-field">
             <label>Email Address</label>
             <input type="email" id="login-email" placeholder="your@email.com"
-              style="padding-left:0.9rem;"
               onkeydown="if(event.key==='Enter') loginUser()"/>
           </div>
           <div class="input-field">
             <label>Password</label>
             <input type="password" id="login-password" placeholder="Enter your password"
-              style="padding-left:0.9rem;"
               onkeydown="if(event.key==='Enter') loginUser()"/>
           </div>
           <button class="btn-auth" onclick="loginUser()">Sign In</button>
@@ -90,30 +60,30 @@
           <div class="field-row">
             <div class="input-field">
               <label>Full Name</label>
-              <input type="text" id="reg-name" placeholder="Juan dela Cruz" style="padding-left:0.9rem;"/>
+              <input type="text" id="reg-name" placeholder="Juan dela Cruz"/>
             </div>
             <div class="input-field">
               <label>School</label>
-              <input type="text" id="reg-school" placeholder="e.g. PLM" style="padding-left:0.9rem;"/>
+              <input type="text" id="reg-school" placeholder="e.g. PLM"/>
             </div>
           </div>
           <div class="input-field">
             <label>Company / Organization</label>
-            <input type="text" id="reg-company" placeholder="e.g. ABC Corporation" style="padding-left:0.9rem;"/>
+            <input type="text" id="reg-company" placeholder="e.g. ABC Corporation"/>
           </div>
           <div class="input-field">
             <label>Email Address</label>
-            <input type="email" id="reg-email" placeholder="your@email.com" style="padding-left:0.9rem;"/>
+            <input type="email" id="reg-email" placeholder="your@email.com"/>
           </div>
           <div class="field-row">
             <div class="input-field">
               <label>Required Hours</label>
-              <input type="number" id="reg-hours" value="600" min="1" max="2000" style="padding-left:0.9rem;"/>
+              <input type="number" id="reg-hours" value="600" min="1" max="2000"/>
             </div>
             <div class="input-field">
               <label>Password</label>
               <input type="password" id="reg-password" placeholder="Min. 6 characters"
-                oninput="checkStrength(this.value)" style="padding-left:0.9rem;"/>
+                oninput="checkStrength(this.value)"/>
             </div>
           </div>
           <div class="strength-bar">
@@ -149,7 +119,6 @@
     el.textContent = msg;
     el.className = `auth-alert ${type} show`;
   }
-
   function clearAlert(id) { document.getElementById(id).classList.remove('show'); }
 
   function checkStrength(val) {
@@ -173,6 +142,11 @@
     const email    = document.getElementById('login-email').value.trim();
     const password = document.getElementById('login-password').value;
     if (!email || !password) { authAlert('login-alert', 'Please enter your email and password.', 'error'); return; }
+
+    const btn = document.querySelector('#panel-login .btn-auth');
+    btn.textContent = 'Signing in…';
+    btn.disabled = true;
+
     fetch(`${API}/auth/login.php`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
@@ -181,13 +155,19 @@
     .then(data => {
       if (data.success) {
         localStorage.setItem('ojt_user', JSON.stringify(data.user));
-        authAlert('login-alert', 'Login successful. Redirecting...', 'success');
+        authAlert('login-alert', '✓ Login successful. Redirecting…', 'success');
         setTimeout(() => window.location.href = 'dashboard.html', 700);
       } else {
         authAlert('login-alert', data.error || 'Invalid credentials.', 'error');
+        btn.textContent = 'Sign In';
+        btn.disabled = false;
       }
     })
-    .catch(() => authAlert('login-alert', 'Unable to connect. Please check that XAMPP is running.', 'error'));
+    .catch(() => {
+      authAlert('login-alert', 'Unable to connect. Please check that XAMPP is running.', 'error');
+      btn.textContent = 'Sign In';
+      btn.disabled = false;
+    });
   }
 
   function registerUser() {
@@ -198,9 +178,15 @@
     const email    = document.getElementById('reg-email').value.trim();
     const hours    = document.getElementById('reg-hours').value;
     const password = document.getElementById('reg-password').value;
+
     if (!name || !email || !password || !company) { authAlert('register-alert', 'Please complete all required fields.', 'error'); return; }
     if (password.length < 6) { authAlert('register-alert', 'Password must be at least 6 characters.', 'error'); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { authAlert('register-alert', 'Please enter a valid email address.', 'error'); return; }
+
+    const btn = document.querySelector('#panel-register .btn-auth');
+    btn.textContent = 'Creating account…';
+    btn.disabled = true;
+
     fetch(`${API}/auth/register.php`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, school, company, email, password, required_hours: hours || 600 })
@@ -208,13 +194,24 @@
     .then(r => r.json())
     .then(data => {
       if (data.success) {
-        authAlert('register-alert', 'Account created. You may now sign in.', 'success');
-        setTimeout(() => { switchTab('login'); document.getElementById('login-email').value = email; }, 1200);
+        authAlert('register-alert', '✓ Account created. You may now sign in.', 'success');
+        setTimeout(() => {
+          switchTab('login');
+          document.getElementById('login-email').value = email;
+          btn.textContent = 'Create Account';
+          btn.disabled = false;
+        }, 1200);
       } else {
         authAlert('register-alert', data.error, 'error');
+        btn.textContent = 'Create Account';
+        btn.disabled = false;
       }
     })
-    .catch(() => authAlert('register-alert', 'Unable to connect to server.', 'error'));
+    .catch(() => {
+      authAlert('register-alert', 'Unable to connect to server.', 'error');
+      btn.textContent = 'Create Account';
+      btn.disabled = false;
+    });
   }
 </script>
 </body>

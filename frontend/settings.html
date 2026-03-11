@@ -5,19 +5,113 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>OJT Tracker — Settings</title>
   <link rel="stylesheet" href="css/style.css"/>
+  <style>
+    .settings-input {
+      width: 100%;
+      padding: 0.62rem 0.9rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      outline: none;
+      font-family: inherit;
+      transition: var(--transition);
+      background: var(--bg-subtle);
+      color: var(--text);
+    }
+    .settings-input:focus {
+      border-color: var(--primary);
+      background: #fff;
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+    .settings-input-disabled {
+      background: var(--border-light);
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+
+    /* ── Logo Upload ── */
+    .logo-upload-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .logo-preview-box {
+      width: 160px;
+      height: 90px;
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-subtle);
+      flex-shrink: 0;
+      overflow: hidden;
+      position: relative;
+      transition: var(--transition);
+    }
+    .logo-preview-box:hover { border-color: var(--primary); }
+    .logo-preview-box img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    .logo-preview-placeholder {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      padding: 0.5rem;
+      line-height: 1.5;
+    }
+    .logo-preview-placeholder span {
+      font-size: 1.5rem;
+      display: block;
+      margin-bottom: 0.25rem;
+      opacity: 0.3;
+    }
+    .logo-upload-controls {
+      flex: 1;
+      min-width: 200px;
+    }
+    .logo-upload-controls p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+    .logo-btn-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .logo-remove-btn {
+      padding: 0.45rem 0.9rem;
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1.5px solid #fecaca;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: var(--transition);
+      display: none;
+    }
+    .logo-remove-btn:hover { background: #fee2e2; }
+    .logo-remove-btn.visible { display: inline-block; }
+  </style>
 </head>
 <body>
 
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
 <div class="topbar">
-  <span class="topbar-logo">OJT Tracker</span>
+  <span class="topbar-logo">OJT <span style="color:#60a5fa;">Tracker</span></span>
   <button class="hamburger" onclick="openSidebar()">&#9776;</button>
 </div>
 
 <div class="layout">
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">OJT <span>Tracker</span></div>
-
     <div class="nav-section-label">Main Menu</div>
     <nav>
       <a href="dashboard.html" class="nav-link">
@@ -33,7 +127,6 @@
         Weekly Reports
       </a>
     </nav>
-
     <div class="nav-section-label" style="margin-top:0.5rem;">Account</div>
     <nav>
       <a href="settings.html" class="nav-link active">
@@ -41,7 +134,6 @@
         Settings
       </a>
     </nav>
-
     <div class="sidebar-footer">
       <div class="sidebar-user">
         <div class="sidebar-avatar" id="sidebar-avatar">J</div>
@@ -59,68 +151,146 @@
       <div class="page-header-left">
         <div class="breadcrumb">Home <span class="breadcrumb-sep"> / </span><span>Settings</span></div>
         <h1>Settings</h1>
-        <p>Manage your OJT configuration and account preferences.</p>
+        <p>Manage your OJT configuration, profile, and journal export preferences.</p>
       </div>
     </div>
 
-    <div id="settings-status" class="alert hidden" style="max-width:680px;"></div>
+    <div id="settings-status" class="alert hidden" style="max-width:720px;"></div>
 
-    <!-- OJT Configuration -->
-    <div class="card" style="margin-bottom:1.25rem; max-width:680px;">
+    <!-- ══ OJT Configuration ══ -->
+    <div class="card" style="margin-bottom:1.25rem; max-width:720px;">
       <div class="card-header">
         <div class="card-title">OJT Configuration</div>
       </div>
-
       <div class="settings-item">
         <div>
           <div class="settings-item-label">Company / Organization</div>
-          <div class="settings-item-desc">The organization where you are currently completing your internship.</div>
+          <div class="settings-item-desc">Host company where you are completing your internship.</div>
         </div>
         <div class="settings-item-control">
-          <input type="text" id="set-company" placeholder="e.g. ABC Corporation"
-            style="width:100%; padding:0.6rem 0.875rem; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:0.875rem; outline:none; font-family:inherit; transition:var(--transition);"
-            onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+          <input type="text" id="set-company" placeholder="e.g. ABC Corporation" class="settings-input"/>
         </div>
       </div>
-
+      <div class="settings-item">
+        <div>
+          <div class="settings-item-label">Department Assigned To</div>
+          <div class="settings-item-desc">Specific department or team within the host company.</div>
+        </div>
+        <div class="settings-item-control">
+          <input type="text" id="set-department" placeholder="e.g. IT Department" class="settings-input"/>
+        </div>
+      </div>
       <div class="settings-item">
         <div>
           <div class="settings-item-label">Required OJT Hours</div>
-          <div class="settings-item-desc">Total number of hours required to complete your internship program.</div>
+          <div class="settings-item-desc">Total hours required to complete your internship program.</div>
         </div>
         <div class="settings-item-control">
-          <input type="number" id="set-hours" placeholder="e.g. 600" min="1" max="2000"
-            style="width:100%; padding:0.6rem 0.875rem; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:0.875rem; outline:none; font-family:inherit; transition:var(--transition);"
-            onfocus="this.style.borderColor='var(--primary)'" onblur="this.style.borderColor='var(--border)'"/>
+          <input type="number" id="set-hours" placeholder="e.g. 600" min="1" max="2000" class="settings-input"/>
         </div>
       </div>
     </div>
 
-    <!-- Profile Information -->
-    <div class="card" style="margin-bottom:1.5rem; max-width:680px;">
+    <!-- ══ Weekly Journal Profile ══ -->
+    <div class="card" style="margin-bottom:1.25rem; max-width:720px;">
+      <div class="card-header">
+        <div class="card-title">Weekly Journal Profile</div>
+        <span class="badge badge-primary">Used for PDF Export</span>
+      </div>
+      <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:1.5rem; line-height:1.6;">
+        These details auto-fill the <strong>Weekly Journal Template</strong> on every PDF export. Fill them in once and never worry about formatting again.
+      </p>
+
+      <!-- Logo Upload -->
+      <div style="margin-bottom:1.5rem; padding-bottom:1.5rem; border-bottom:1px solid var(--border-light);">
+        <div style="font-size:0.77rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-secondary); margin-bottom:0.75rem;">
+          School / Organization Logo
+        </div>
+        <div class="logo-upload-wrap">
+          <div class="logo-preview-box" id="logo-preview-box" onclick="document.getElementById('logo-file-input').click()" style="cursor:pointer;" title="Click to upload logo">
+            <div class="logo-preview-placeholder" id="logo-placeholder">
+              <span>🏫</span>
+              Click to upload
+            </div>
+            <img id="logo-preview-img" src="" alt="Logo preview" style="display:none;"/>
+          </div>
+          <div class="logo-upload-controls">
+            <p>Upload your school or organization logo. It will appear in the top-left of the <strong>Weekly Journal Template</strong> header when exporting to PDF.</p>
+            <p style="margin-top:0.25rem;">Accepted formats: <strong>JPG, PNG, WEBP, GIF</strong>. Recommended size: at least <strong>200×80px</strong>.</p>
+            <input type="file" id="logo-file-input" accept=".jpg,.jpeg,.png,.webp,.gif" style="display:none;" onchange="handleLogoUpload(this)"/>
+            <div class="logo-btn-row">
+              <button class="btn btn-outline btn-sm" onclick="document.getElementById('logo-file-input').click()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Choose Logo
+              </button>
+              <button class="logo-remove-btn" id="logo-remove-btn" onclick="removeLogo()">✕ Remove</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Student Info Fields -->
+      <div class="form-row" style="margin-bottom:0;">
+        <div class="form-group">
+          <label>Campus / School Name</label>
+          <input type="text" id="set-campus" placeholder="e.g. STI College Makati" class="settings-input" style="width:100%;"/>
+        </div>
+        <div class="form-group">
+          <label>Program</label>
+          <input type="text" id="set-program" placeholder="e.g. BSIT" class="settings-input" style="width:100%;"/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Year Level</label>
+          <input type="text" id="set-year-level" placeholder="e.g. 4th Year" class="settings-input" style="width:100%;"/>
+        </div>
+        <div class="form-group">
+          <label>Section</label>
+          <input type="text" id="set-section" placeholder="e.g. IT401" class="settings-input" style="width:100%;"/>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Middle Initial</label>
+          <input type="text" id="set-mi" placeholder="e.g. G." maxlength="5" class="settings-input" style="width:100%;"/>
+        </div>
+        <div class="form-group">
+          <label>OJT Supervisor Name</label>
+          <input type="text" id="set-supervisor" placeholder="e.g. Mr. Juan Dela Cruz" class="settings-input" style="width:100%;"/>
+        </div>
+      </div>
+
+      <!-- Template Title Override -->
+      <div class="form-group" style="margin-top:0.25rem;">
+        <label>Journal Template Title <span style="text-transform:none; font-weight:500; color:var(--text-muted); letter-spacing:0;">(shown in header)</span></label>
+        <input type="text" id="set-template-title" placeholder="e.g. WEEKLY JOURNAL TEMPLATE" class="settings-input" style="width:100%;"/>
+      </div>
+    </div>
+
+    <!-- ══ Profile Information (read-only) ══ -->
+    <div class="card" style="margin-bottom:1.5rem; max-width:720px;">
       <div class="card-header">
         <div class="card-title">Profile Information</div>
       </div>
-
       <div class="settings-item">
         <div>
           <div class="settings-item-label">Full Name</div>
-          <div class="settings-item-desc">Your registered name. Contact your administrator to update.</div>
+          <div class="settings-item-desc">Your registered name.</div>
         </div>
         <div class="settings-item-control">
-          <input type="text" id="set-name" disabled
-            style="width:100%; padding:0.6rem 0.875rem; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:0.875rem; background:var(--bg); color:var(--text-muted); font-family:inherit;"/>
+          <input type="text" id="set-name" disabled class="settings-input settings-input-disabled"/>
         </div>
       </div>
-
       <div class="settings-item">
         <div>
           <div class="settings-item-label">Email Address</div>
           <div class="settings-item-desc">Used to authenticate your account.</div>
         </div>
         <div class="settings-item-control">
-          <input type="email" id="set-email" disabled
-            style="width:100%; padding:0.6rem 0.875rem; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:0.875rem; background:var(--bg); color:var(--text-muted); font-family:inherit;"/>
+          <input type="email" id="set-email" disabled class="settings-input settings-input-disabled"/>
         </div>
       </div>
     </div>
@@ -135,24 +305,101 @@
   document.getElementById('sidebar-name').textContent   = user.name;
   document.getElementById('sidebar-avatar').textContent = user.name.charAt(0).toUpperCase();
 
-  const settings = JSON.parse(localStorage.getItem('ojt_settings') || '{}');
-  document.getElementById('set-company').value = settings.company        || user.company        || '';
-  document.getElementById('set-hours').value   = settings.required_hours || user.required_hours || 600;
-  document.getElementById('set-name').value    = user.name;
-  document.getElementById('set-email').value   = user.email;
+  const s = JSON.parse(localStorage.getItem('ojt_settings') || '{}');
 
-  function saveSettings() {
-    const company  = document.getElementById('set-company').value.trim();
-    const hours    = parseInt(document.getElementById('set-hours').value);
-    const statusEl = document.getElementById('settings-status');
+  // Restore saved field values
+  document.getElementById('set-company').value        = s.company        || user.company || '';
+  document.getElementById('set-hours').value          = s.required_hours || user.required_hours || 600;
+  document.getElementById('set-department').value     = s.department     || '';
+  document.getElementById('set-campus').value         = s.campus         || user.school  || '';
+  document.getElementById('set-program').value        = s.program        || '';
+  document.getElementById('set-year-level').value     = s.year_level     || '';
+  document.getElementById('set-section').value        = s.section        || '';
+  document.getElementById('set-supervisor').value     = s.supervisor     || '';
+  document.getElementById('set-mi').value             = s.mi             || '';
+  document.getElementById('set-template-title').value = s.template_title || 'WEEKLY JOURNAL TEMPLATE';
+  document.getElementById('set-name').value           = user.name;
+  document.getElementById('set-email').value          = user.email;
 
-    if (!company || !hours || hours < 1) {
-      showAlert(statusEl, 'Please fill in all required fields correctly.', 'error'); return;
+  // Restore saved logo
+  const savedLogo = localStorage.getItem('ojt_logo');
+  if (savedLogo) showLogoPreview(savedLogo);
+
+  // ── Logo Handling ──
+  function handleLogoUpload(input) {
+    if (!input.files || !input.files[0]) return;
+    const file = input.files[0];
+
+    // Warn if file is very large (>500KB shown as warning — still allowed)
+    if (file.size > 2 * 1024 * 1024) {
+      const statusEl = document.getElementById('settings-status');
+      showAlert(statusEl, '⚠ Logo file is large (>2MB). Consider compressing it for faster exports.', 'warning');
+      setTimeout(() => statusEl.classList.add('hidden'), 5000);
     }
 
-    localStorage.setItem('ojt_settings', JSON.stringify({ company, required_hours: hours }));
-    showAlert(statusEl, 'Settings saved successfully.', 'success');
-    setTimeout(() => statusEl.classList.add('hidden'), 3000);
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const base64 = e.target.result;
+      localStorage.setItem('ojt_logo', base64);
+      showLogoPreview(base64);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function showLogoPreview(base64) {
+    const img         = document.getElementById('logo-preview-img');
+    const placeholder = document.getElementById('logo-placeholder');
+    const removeBtn   = document.getElementById('logo-remove-btn');
+    const box         = document.getElementById('logo-preview-box');
+
+    img.src           = base64;
+    img.style.display = 'block';
+    placeholder.style.display = 'none';
+    removeBtn.classList.add('visible');
+    box.style.borderStyle  = 'solid';
+    box.style.borderColor  = 'var(--primary)';
+    box.style.background   = '#fff';
+  }
+
+  function removeLogo() {
+    localStorage.removeItem('ojt_logo');
+    document.getElementById('logo-preview-img').style.display = 'none';
+    document.getElementById('logo-preview-img').src = '';
+    document.getElementById('logo-placeholder').style.display = 'block';
+    document.getElementById('logo-remove-btn').classList.remove('visible');
+    document.getElementById('logo-file-input').value = '';
+
+    const box = document.getElementById('logo-preview-box');
+    box.style.borderStyle = 'dashed';
+    box.style.borderColor = 'var(--border)';
+    box.style.background  = 'var(--bg-subtle)';
+  }
+
+  // ── Save All Settings ──
+  function saveSettings() {
+    const company        = document.getElementById('set-company').value.trim();
+    const hours          = parseInt(document.getElementById('set-hours').value);
+    const department     = document.getElementById('set-department').value.trim();
+    const campus         = document.getElementById('set-campus').value.trim();
+    const program        = document.getElementById('set-program').value.trim();
+    const year_level     = document.getElementById('set-year-level').value.trim();
+    const section        = document.getElementById('set-section').value.trim();
+    const supervisor     = document.getElementById('set-supervisor').value.trim();
+    const mi             = document.getElementById('set-mi').value.trim();
+    const template_title = document.getElementById('set-template-title').value.trim() || 'WEEKLY JOURNAL TEMPLATE';
+    const statusEl       = document.getElementById('settings-status');
+
+    if (!company || !hours || hours < 1) {
+      showAlert(statusEl, 'Company and Required Hours are required.', 'error'); return;
+    }
+
+    localStorage.setItem('ojt_settings', JSON.stringify({
+      company, required_hours: hours, department,
+      campus, program, year_level, section, supervisor, mi, template_title
+    }));
+
+    showAlert(statusEl, '✓ Settings saved successfully.', 'success');
+    setTimeout(() => statusEl.classList.add('hidden'), 3500);
   }
 
   function openSidebar()  { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebar-overlay').classList.add('show'); }
