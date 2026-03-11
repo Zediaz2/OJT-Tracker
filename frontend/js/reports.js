@@ -257,7 +257,7 @@ function loadReports() {
               <span class="badge badge-primary" style="font-size:0.72rem;">${r.week_start} — ${r.week_end}</span>
 
               <!-- Export PDF -->
-              <button onclick="exportSinglePDF(${allReports.length - 1 - i})"
+              <button onclick="exportSinglePDF(${r.id})"
                 class="rpt-action-btn"
                 title="Export as PDF"
                 style="color:var(--primary);"
@@ -270,7 +270,7 @@ function loadReports() {
               </button>
 
               <!-- Edit -->
-              <button onclick="openEditModal(${allReports.length - 1 - i})"
+              <button onclick="openEditModal(${r.id})"
                 class="rpt-action-btn"
                 title="Edit report"
                 style="color:#0ea5e9;"
@@ -284,7 +284,7 @@ function loadReports() {
               </button>
 
               <!-- Delete -->
-              <button onclick="openDeleteModal(${allReports.length - 1 - i})"
+              <button onclick="openDeleteModal(${r.id})"
                 class="rpt-action-btn"
                 title="Delete report"
                 style="color:#dc2626;"
@@ -366,8 +366,8 @@ function loadReports() {
 // Images to remove (array of paths)
 let editImagesToRemove = [];
 
-function openEditModal(index) {
-  const r = allReports[index];
+function openEditModal(id) {
+  const r = allReports.find(r => r.id == id);
   if (!r) return;
 
   editImagesToRemove = [];
@@ -515,8 +515,8 @@ function saveEditReport() {
 // ════════════════════════════════════════════════════════
 //  DELETE REPORT
 // ════════════════════════════════════════════════════════
-function openDeleteModal(index) {
-  const r = allReports[index];
+function openDeleteModal(id) {
+  const r = allReports.find(r => r.id == id);
   if (!r) return;
   document.getElementById('delete-report-id').value   = r.id;
   document.getElementById('delete-report-title').textContent = `"${r.title}"`;
@@ -985,15 +985,15 @@ ${pages}
 </html>`;
 }
 
-function exportSinglePDF(index) {
-  const report = allReports[index];
+function exportSinglePDF(id) {
+  const report = allReports.find(r => r.id == id);
   if (!report) return;
   openPrintWindow(buildPrintDocument([report]));
 }
 
 function exportAllPDF() {
   if (!allReports.length) return;
-  openPrintWindow(buildPrintDocument([...allReports].reverse()));
+  openPrintWindow(buildPrintDocument([...allReports]));
 }
 
 function openPrintWindow(html) {
