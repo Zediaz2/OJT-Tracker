@@ -18,9 +18,8 @@ if ($break_minutes < 0 || $break_minutes > 480) {
 
 // Get today's time_in record
 $stmt = $conn->prepare("SELECT id, time_in, time_out FROM dtr_records WHERE user_id = ? AND date = ?");
-$stmt->bind_param("is", $user_id, $date);
-$stmt->execute();
-$record = $stmt->get_result()->fetch_assoc();
+$stmt->execute([$user_id, $date]);
+$record = $stmt->fetch();
 
 if (!$record) {
     echo json_encode(['error' => 'No time-in record found for today']); exit;
@@ -45,9 +44,8 @@ $total_hours   = round($net_minutes / 60, 2);
 $update = $conn->prepare(
     "UPDATE dtr_records SET time_out = ?, total_hours = ?, break_minutes = ? WHERE id = ?"
 );
-$update->bind_param("sdii", $time_out, $total_hours, $break_minutes, $record['id']);
 
-if ($update->execute()) {
+if ($update->execute([$time_out, $total_hours, $break_minutes, $record['id']])) {
     echo json_encode([
         'success'       => true,
         'time_out'      => $time_out,

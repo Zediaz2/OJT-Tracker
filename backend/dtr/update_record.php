@@ -19,9 +19,8 @@ if ($break_minutes < 0 || $break_minutes > 480) {
 
 // Verify this record belongs to the user (security check)
 $check = $conn->prepare("SELECT id FROM dtr_records WHERE id = ? AND user_id = ?");
-$check->bind_param("ii", $id, $user_id);
-$check->execute();
-if ($check->get_result()->num_rows === 0) {
+$check->execute([$id, $user_id]);
+if (!$check->fetch()) {
     echo json_encode(['error' => 'Record not found or access denied']); exit;
 }
 
@@ -45,9 +44,8 @@ $stmt = $conn->prepare(
      SET date = ?, time_in = ?, time_out = ?, break_minutes = ?, total_hours = ?
      WHERE id = ? AND user_id = ?"
 );
-$stmt->bind_param("sssidii", $date, $time_in, $time_out, $break_minutes, $total_hours, $id, $user_id);
 
-if ($stmt->execute()) {
+if ($stmt->execute([$date, $time_in, $time_out, $break_minutes, $total_hours, $id, $user_id])) {
     echo json_encode([
         'success'       => true,
         'total_hours'   => $total_hours,
