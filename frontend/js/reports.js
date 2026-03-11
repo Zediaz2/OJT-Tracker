@@ -560,24 +560,29 @@ function buildSTIPage(report, reportNumber, totalReports, profile, logoBase64) {
     <div class="accomplishments-box">${report.description.replace(/\n/g, '<br/>')}</div>
   </div>
 
-  <!-- ══ SIGNATURE ══ -->
-  <div class="signature-row">
-    <div class="sig-block">
-      <p class="sig-label">Reviewed by:</p>
-      <div class="sig-line"></div>
-      <p class="sig-sublabel">OJT Supervisor Signature</p>
-      ${profile.supervisor ? `<p class="sig-name">${profile.supervisor}</p>` : ''}
-    </div>
-    <div class="sig-block">
-      <p class="sig-label">Date</p>
-      <div class="sig-line"></div>
-    </div>
-  </div>
+  <!-- ══ BOTTOM BLOCK — always pinned to page bottom ══ -->
+  <div class="page-bottom">
 
-  <!-- ══ FOOTER ══ -->
-  <div class="page-footer">
-    <span>FT-CRD-167-00 &nbsp;|&nbsp; Weekly Journal Template &nbsp;|&nbsp; Page ${reportNumber} of ${totalReports}</span>
-    <span>Submitted: ${new Date(report.submitted_at).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })}</span>
+    <!-- Signature -->
+    <div class="signature-row">
+      <div class="sig-block">
+        <p class="sig-label">Reviewed by:</p>
+        <div class="sig-line"></div>
+        <p class="sig-sublabel">OJT Supervisor Signature</p>
+        ${profile.supervisor ? `<p class="sig-name">${profile.supervisor}</p>` : ''}
+      </div>
+      <div class="sig-block">
+        <p class="sig-label">Date</p>
+        <div class="sig-line"></div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="page-footer">
+      <span>FT-CRD-167-00 &nbsp;|&nbsp; Weekly Journal Template &nbsp;|&nbsp; Page ${reportNumber} of ${totalReports}</span>
+      <span>Submitted: ${new Date(report.submitted_at).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })}</span>
+    </div>
+
   </div>
 
 </div>`;
@@ -705,7 +710,7 @@ body {
 /* ── Accomplishments ── */
 .accomplishments-section {
   margin-top: 9pt;
-  flex: 1;
+  flex: 1;                  /* fills all remaining space between content and page-bottom */
   display: flex;
   flex-direction: column;
 }
@@ -730,8 +735,14 @@ body {
   color: #111;
   white-space: pre-wrap;
   word-break: break-word;
-  flex: 1;
-  min-height: 160pt;
+  flex: 1;                  /* box itself fills the section height */
+  min-height: 140pt;
+}
+
+/* ── Bottom block: signature + footer — always anchored to page bottom ── */
+.page-bottom {
+  margin-top: auto;         /* KEY: pushes this block to the bottom of the flex column */
+  padding-top: 0;
 }
 
 /* ── Signature ── */
@@ -750,7 +761,7 @@ body {
   font-size: 8pt;
   font-weight: 700;
   color: #222;
-  margin-bottom: 18pt;
+  margin-bottom: 16pt;
 }
 .sig-line {
   border-bottom: 1pt solid #111;
@@ -818,7 +829,7 @@ body {
 
   .sti-page {
     width: 100%;
-    min-height: 0;
+    min-height: 297mm;        /* ← MUST keep this so flex fills the full A4 page */
     margin: 0;
     padding: 12mm 15mm 10mm;
     box-shadow: none;
@@ -830,10 +841,9 @@ body {
     break-after: avoid;
   }
 
-  /* Keep accomplishments box from breaking across pages */
+  /* Prevent these blocks from splitting across pages */
   .accomplishments-box { break-inside: avoid; }
-  .signature-row        { break-inside: avoid; }
-  .page-footer          { break-inside: avoid; }
+  .page-bottom          { break-inside: avoid; }
 
   @page {
     size: A4 portrait;
