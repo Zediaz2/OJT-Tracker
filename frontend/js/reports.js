@@ -886,12 +886,13 @@ function buildSTIPage(report, reportNumber, totalReports, profile, logoBase64) {
     <div class="signature-row">
       <div class="sig-block">
         <p class="sig-label">Reviewed by:</p>
+        ${profile.supervisor ? `<p class="sig-name">${profile.supervisor}</p>` : ''}
         <div class="sig-line"></div>
         <p class="sig-sublabel">OJT Supervisor Signature</p>
-        ${profile.supervisor ? `<p class="sig-name">${profile.supervisor}</p>` : ''}
       </div>
       <div class="sig-block">
         <p class="sig-label">Date</p>
+        ${profile.supervisor ? `<p class="sig-name" style="visibility:hidden;">&nbsp;</p>` : ''}
         <div class="sig-line"></div>
       </div>
     </div>
@@ -1108,9 +1109,10 @@ body {
   margin-top: 2pt;
 }
 .sig-name {
-  font-size: 7.5pt;
-  color: #555;
-  margin-top: 1pt;
+  font-size: 8pt;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 4pt;
 }
 
 /* ── Footer ── */
