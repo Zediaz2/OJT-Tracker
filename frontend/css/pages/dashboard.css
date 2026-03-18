@@ -1,0 +1,135 @@
+/* ============================================================
+   OJT TRACKER — Dashboard Page
+   Stat cards, progress bar, and dashboard-specific layout.
+   Depends on: global.css
+   ============================================================ */
+
+/* ─────────────────────────────────────────────────────────────
+   Stat Cards Grid
+───────────────────────────────────────────────────────────── */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  padding: 1.4rem 1.5rem 1.25rem;
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp 0.35s ease both;
+  cursor: default;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+/* Gradient top accent bar */
+.stat-card::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  height: 3px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+
+/* Staggered entry animations */
+.stat-card:nth-child(1) { animation-delay: 0.04s; }
+.stat-card:nth-child(2) { animation-delay: 0.09s; }
+.stat-card:nth-child(3) { animation-delay: 0.14s; }
+.stat-card:nth-child(4) { animation-delay: 0.19s; }
+
+/* Per-card colour themes */
+.stat-card-1::before { background: linear-gradient(90deg, var(--primary), #60a5fa); }
+.stat-card-2::before { background: linear-gradient(90deg, var(--success), #34d399); }
+.stat-card-3::before { background: linear-gradient(90deg, var(--warning), #fbbf24); }
+.stat-card-4::before { background: linear-gradient(90deg, var(--purple), #a78bfa); }
+
+/* Icon wrapper */
+.stat-icon-wrap {
+  width: 40px; height: 40px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+.stat-icon-1 { background: linear-gradient(135deg, #eff6ff, #dbeafe); color: var(--primary); }
+.stat-icon-2 { background: linear-gradient(135deg, #ecfdf5, #d1fae5); color: var(--success); }
+.stat-icon-3 { background: linear-gradient(135deg, #fffbeb, #fef3c7); color: var(--warning); }
+.stat-icon-4 { background: linear-gradient(135deg, #f5f3ff, #ede9fe); color: var(--purple); }
+
+/* Stat text */
+.stat-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.4rem;
+}
+
+.stat-value {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.stat-sub { font-size: 0.72rem; color: var(--text-faint); margin-top: 0.4rem; font-weight: 500; }
+
+/* ─────────────────────────────────────────────────────────────
+   Progress Bar
+───────────────────────────────────────────────────────────── */
+.progress-wrap { margin-top: 0.25rem; }
+
+.progress-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.7rem;
+  font-weight: 600;
+}
+
+.progress-bar-bg {
+  background: var(--bg-inset);
+  border-radius: 999px;
+  height: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--primary), #6366f1, #818cf8);
+  transition: width 1s cubic-bezier(0.4,0,0.2,1);
+  position: relative;
+  min-width: 4px;
+}
+
+.progress-bar-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.28) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2.5s infinite;
+}
+
+.progress-remaining-text { margin-top: 0.65rem; font-size: 0.78rem; color: var(--text-muted); font-weight: 500; }
+
+/* ─────────────────────────────────────────────────────────────
+   Responsive
+───────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .cards-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 400px) {
+  .cards-grid { grid-template-columns: 1fr; }
+}

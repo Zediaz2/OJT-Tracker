@@ -4,7 +4,8 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>OJT Tracker — Dashboard</title>
-  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/global.css"/>
+  <link rel="stylesheet" href="css/pages/dashboard.css"/>
 </head>
 <body>
 
@@ -21,7 +22,7 @@
     <div class="nav-section-label">Main Menu</div>
     <nav>
       <a href="dashboard.html" class="nav-link active">
-        <svg class="nav-icon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <svg class="nav-icon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
         Dashboard
       </a>
       <a href="dtr.html" class="nav-link">
@@ -50,39 +51,58 @@
           <div class="sidebar-user-role">OJT Student</div>
         </div>
       </div>
-      <button class="btn btn-ghost btn-sm full-width" onclick="logoutUser()">Sign Out</button>
+      <button class="btn btn-ghost btn-sm full-width" onclick="logoutUser()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
     </div>
   </aside>
 
   <main class="main">
+
+    <!-- ── Page Header ── -->
     <div class="page-header">
       <div class="page-header-left">
-        <div class="breadcrumb">Home <span class="breadcrumb-sep"> / </span><span>Dashboard</span></div>
-        <h1>Dashboard</h1>
+        <div class="breadcrumb">
+          Home <span class="breadcrumb-sep">›</span> <span class="current">Dashboard</span>
+        </div>
+        <h1>
+          <span class="page-title-icon page-title-icon-blue">📊</span>
+          Dashboard
+        </h1>
         <p>Welcome back, <strong id="dash-name"></strong>. Here's your internship overview.</p>
       </div>
-      <a href="dtr.html" class="btn btn-primary btn-sm" style="margin-top:0.25rem;">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>
-        Record Attendance
-      </a>
+      <div class="page-header-actions">
+        <a href="dtr.html" class="btn btn-primary">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>
+          Record Attendance
+        </a>
+      </div>
     </div>
 
+    <!-- ── Stat Cards ── -->
     <div class="cards-grid">
+      <!-- Company -->
       <div class="card stat-card stat-card-1">
         <div class="stat-icon-wrap stat-icon-1">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         </div>
         <div class="stat-label">Company</div>
-        <div class="stat-value" id="dash-company" style="font-size:1rem; margin-top:0.15rem;">—</div>
+        <div class="stat-value" id="dash-company" style="font-size:1rem; margin-top:0.2rem; letter-spacing:-0.01em; font-weight:700;">—</div>
+        <div class="stat-sub">host organization</div>
       </div>
+
+      <!-- Hours Rendered -->
       <div class="card stat-card stat-card-2">
         <div class="stat-icon-wrap stat-icon-2">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 12"/></svg>
         </div>
         <div class="stat-label">Hours Rendered</div>
-        <div class="stat-value" id="dash-hours">0</div>
+        <div class="stat-value" id="dash-hours">0.0</div>
         <div class="stat-sub">net hours completed</div>
       </div>
+
+      <!-- Required Hours -->
       <div class="card stat-card stat-card-3">
         <div class="stat-icon-wrap stat-icon-3">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
@@ -91,6 +111,8 @@
         <div class="stat-value" id="dash-required">—</div>
         <div class="stat-sub">total OJT hours</div>
       </div>
+
+      <!-- Reports -->
       <div class="card stat-card stat-card-4">
         <div class="stat-icon-wrap stat-icon-4">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -101,10 +123,13 @@
       </div>
     </div>
 
-    <!-- Progress Card -->
-    <div class="card" style="margin-bottom:1.25rem;">
+    <!-- ── Internship Progress ── -->
+    <div class="card card-elevated" style="margin-bottom:1.25rem;">
       <div class="card-header">
-        <div class="card-title">Internship Progress</div>
+        <div>
+          <div class="card-title">Internship Progress</div>
+          <div class="card-subtitle">Track your completed OJT hours</div>
+        </div>
         <span class="badge badge-primary" id="progress-badge">0%</span>
       </div>
       <div class="progress-wrap">
@@ -115,27 +140,48 @@
         <div class="progress-bar-bg">
           <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
         </div>
-        <div style="margin-top:0.6rem; font-size:0.77rem; color:var(--text-muted);" id="progress-remaining"></div>
+        <div class="progress-remaining-text" id="progress-remaining"></div>
       </div>
     </div>
 
-    <!-- Recent Attendance -->
+    <!-- ── Recent Attendance ── -->
     <div class="card">
       <div class="card-header">
-        <div class="card-title">Recent Attendance</div>
-        <a href="dtr.html" class="btn btn-outline btn-sm">View All</a>
+        <div>
+          <div class="card-title">Recent Attendance</div>
+          <div class="card-subtitle">Your last 5 recorded days</div>
+        </div>
+        <a href="dtr.html" class="btn btn-outline btn-sm">
+          View All
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
       </div>
       <div class="table-wrap">
         <table class="table">
           <thead>
-            <tr><th>Date</th><th>Time In</th><th>Time Out</th><th>Break</th><th>Net Hours</th></tr>
+            <tr>
+              <th>Date</th>
+              <th>Time In</th>
+              <th>Time Out</th>
+              <th>Break</th>
+              <th>Net Hours</th>
+            </tr>
           </thead>
           <tbody id="recent-dtr">
-            <tr><td colspan="5"><div class="empty-state"><p>No attendance records found.</p></div></td></tr>
+            <tr>
+              <td colspan="5">
+                <div class="empty-state">
+                  <div class="empty-state-icon">🕐</div>
+                  <h3>No records yet</h3>
+                  <p>Start recording your attendance with the button above.</p>
+                </div>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
     </div>
+
   </main>
 </div>
 
@@ -168,21 +214,22 @@
         ? `${remain} hours remaining to complete your OJT`
         : '🎉 OJT hours requirement fulfilled!';
 
-      // Animate progress bar after paint
       requestAnimationFrame(() => {
         setTimeout(() => {
           document.getElementById('progress-bar').style.width = pct + '%';
-        }, 100);
+        }, 120);
       });
 
       const recent = records.slice(0, 5);
       if (!recent.length) return;
       document.getElementById('recent-dtr').innerHTML = recent.map((r, i) => `
         <tr style="animation: fadeUp 0.3s ease ${i * 0.06}s both;">
-          <td style="font-weight:600;">${r.date}</td>
-          <td>${r.time_in  || '—'}</td>
-          <td>${r.time_out || '—'}</td>
-          <td>${r.break_minutes > 0 ? `<span class="badge badge-warning">${r.break_minutes}m</span>` : `<span style="color:var(--text-muted)">—</span>`}</td>
+          <td style="font-weight:700; color:var(--text);">${r.date}</td>
+          <td>${r.time_in  || '<span style="color:var(--text-faint)">—</span>'}</td>
+          <td>${r.time_out || '<span style="color:var(--text-faint)">—</span>'}</td>
+          <td>${r.break_minutes > 0
+            ? `<span class="badge badge-warning">${r.break_minutes} min</span>`
+            : `<span style="color:var(--text-faint); font-size:0.82rem;">—</span>`}</td>
           <td>${r.total_hours
             ? `<span class="badge badge-success">${parseFloat(r.total_hours).toFixed(2)} hrs</span>`
             : `<span class="badge badge-warning">In Progress</span>`}</td>
@@ -194,8 +241,14 @@
       document.getElementById('dash-reports').textContent = (data.reports || []).length;
     });
 
-  function openSidebar()  { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebar-overlay').classList.add('show'); }
-  function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('show'); }
+  function openSidebar()  {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebar-overlay').classList.add('show');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('show');
+  }
 </script>
 </body>
 </html>

@@ -1,0 +1,451 @@
+/* ============================================================
+   OJT TRACKER — Daily Time Record Page
+   Clock panel, time-in/out buttons, break modal,
+   collapsible section, and redesigned manual entry strip.
+   Depends on: global.css
+   ============================================================ */
+
+/* ─────────────────────────────────────────────────────────────
+   Clock Hero Panel
+───────────────────────────────────────────────────────────── */
+.dtr-hero {
+  background: var(--sidebar-bg);
+  border-radius: var(--radius-xl);
+  padding: 3rem 2rem 2.5rem;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  animation: scaleIn 0.3s ease both;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+/* Gradient orbs */
+.dtr-hero::before {
+  content: ''; position: absolute;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(37,99,235,0.2) 0%, transparent 70%);
+  border-radius: 50%; top: -150px; right: -100px;
+  animation: float 9s ease-in-out infinite;
+}
+.dtr-hero::after {
+  content: ''; position: absolute;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(99,102,241,0.14) 0%, transparent 70%);
+  border-radius: 50%; bottom: -100px; left: -80px;
+  animation: float 11s ease-in-out infinite reverse;
+}
+
+/* Subtle dot-grid background */
+.dtr-hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+/* Date line */
+.dtr-date {
+  font-size: 0.8rem;
+  color: #4b6278;
+  margin-bottom: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+  position: relative; z-index: 1;
+}
+
+/* Digital clock */
+.dtr-clock {
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 4.5rem;
+  font-weight: 500;
+  letter-spacing: -2px;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  color: #f1f5f9;
+  position: relative; z-index: 1;
+  text-shadow: 0 2px 20px rgba(37,99,235,0.3);
+}
+.dtr-clock-sep { animation: tick 1s step-start infinite; display: inline; opacity: 0.6; }
+
+/* Status message area */
+.dtr-status-wrap {
+  min-height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  position: relative; z-index: 1;
+}
+
+/* Button row */
+.dtr-buttons { display: flex; gap: 0.85rem; justify-content: center; position: relative; z-index: 1; }
+
+/* Time In button */
+.btn-in {
+  background: rgba(5, 150, 105, 0.14);
+  color: #6ee7b7;
+  border: 1.5px solid rgba(5, 150, 105, 0.28);
+  padding: 0.8rem 2.5rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: var(--radius);
+  backdrop-filter: blur(4px);
+  transition: var(--transition);
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+}
+.btn-in:hover {
+  background: rgba(5,150,105,0.28);
+  border-color: rgba(5,150,105,0.5);
+  color: #a7f3d0;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(5,150,105,0.22);
+}
+
+/* Time Out button */
+.btn-out {
+  background: rgba(220, 38, 38, 0.14);
+  color: #fca5a5;
+  border: 1.5px solid rgba(220, 38, 38, 0.28);
+  padding: 0.8rem 2.5rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: var(--radius);
+  backdrop-filter: blur(4px);
+  transition: var(--transition);
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+}
+.btn-out:hover {
+  background: rgba(220,38,38,0.28);
+  border-color: rgba(220,38,38,0.5);
+  color: #fecaca;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(220,38,38,0.22);
+}
+
+/* Break info pill (shown while timed in) */
+.dtr-break-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 99px;
+  padding: 0.3rem 0.9rem;
+  font-size: 0.74rem;
+  color: #7c8fa8;
+  margin-bottom: 1.25rem;
+  position: relative; z-index: 1;
+  transition: var(--transition);
+}
+.dtr-break-info-dot {
+  width: 6px; height: 6px;
+  background: #60a5fa;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(96,165,250,0.6);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Collapsible (manual entry reveal)
+───────────────────────────────────────────────────────────── */
+.collapsible { overflow: hidden; transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1); max-height: 0; }
+.collapsible.open { max-height: 700px; }
+
+/* ─────────────────────────────────────────────────────────────
+   Break Time Modal
+───────────────────────────────────────────────────────────── */
+.break-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 12, 28, 0.72);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeIn 0.18s ease;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.break-modal-overlay.hidden { display: none; }
+
+.break-modal {
+  background: #fff;
+  border-radius: var(--radius-xl);
+  padding: 1.85rem;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: var(--shadow-xl);
+  animation: scaleIn 0.24s var(--spring);
+  border: 1px solid var(--border-light);
+}
+
+.break-modal-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 0.3rem;
+  letter-spacing: -0.025em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.break-modal-sub { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.4rem; line-height: 1.6; }
+
+/* Break duration preset grid */
+.break-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-bottom: 1.25rem; }
+
+.break-option {
+  padding: 0.9rem 0.5rem;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  background: var(--bg-subtle);
+  user-select: none;
+}
+.break-option:hover    { border-color: var(--primary); background: var(--primary-light); transform: translateY(-1px); }
+.break-option.selected { border-color: var(--primary); background: var(--primary-light); box-shadow: 0 0 0 2px var(--primary-glow); }
+
+.break-option-mins { font-size: 1.2rem; font-weight: 800; color: var(--text); letter-spacing: -0.03em; margin-bottom: 0.15rem; }
+.break-option.selected .break-option-mins { color: var(--primary); }
+.break-option-label { font-size: 0.66rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+
+/* Custom duration input */
+.break-custom-wrap { margin-bottom: 1.25rem; }
+.break-custom-wrap label {
+  display: block;
+  font-size: 0.75rem; font-weight: 700;
+  color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.4rem;
+}
+.break-custom-input { display: flex; align-items: center; gap: 0.5rem; }
+.break-custom-input input {
+  flex: 1; padding: 0.62rem 0.9rem;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  font-size: 0.9rem; font-family: inherit; color: var(--text);
+  background: var(--bg-subtle); outline: none; transition: var(--transition);
+}
+.break-custom-input input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px var(--primary-glow); }
+.break-custom-unit { font-size: 0.84rem; color: var(--text-muted); font-weight: 600; white-space: nowrap; }
+
+/* Modal action buttons */
+.break-modal-actions { display: flex; gap: 0.6rem; }
+.break-modal-actions .btn { flex: 1; padding: 0.72rem; }
+
+/* ─────────────────────────────────────────────────────────────
+   Manual Entry — Redesigned entry strip
+───────────────────────────────────────────────────────────── */
+.manual-entry-body {
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border-light);
+  margin-top: 1.1rem;
+  animation: fadeUp 0.22s ease both;
+}
+
+/* Instruction hint bar */
+.manual-entry-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.9rem;
+  margin-bottom: 1.25rem;
+}
+.manual-entry-hint svg { flex-shrink: 0; color: var(--primary); }
+
+/* Unified entry strip — inline spreadsheet layout */
+.manual-strip {
+  display: grid;
+  grid-template-columns: 180px 1fr 1fr auto auto;
+  gap: 0;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg-subtle);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.manual-strip:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+  background: #fff;
+}
+
+/* Individual cells */
+.manual-cell {
+  display: flex;
+  flex-direction: column;
+  padding: 0.7rem 1rem;
+  border-right: 1.5px solid var(--border);
+  background: transparent;
+  min-width: 0;
+  transition: background 0.15s;
+}
+.manual-cell:last-child  { border-right: none; }
+.manual-cell:focus-within { background: #fff; }
+
+/* Cell label with colour dot */
+.manual-cell-label {
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-muted);
+  margin-bottom: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  white-space: nowrap;
+}
+.manual-cell-label-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.dot-date  { background: var(--primary); }
+.dot-in    { background: var(--success); }
+.dot-out   { background: var(--danger); }
+.dot-break { background: var(--warning); }
+
+/* Date / time native inputs inside cells */
+.manual-cell input[type="date"],
+.manual-cell input[type="time"] {
+  border: none; background: transparent; outline: none;
+  font-size: 0.92rem; font-family: inherit; font-weight: 600;
+  color: var(--text); width: 100%; padding: 0;
+  cursor: pointer; letter-spacing: -0.01em;
+}
+.manual-cell input[type="date"]::-webkit-calendar-picker-indicator,
+.manual-cell input[type="time"]::-webkit-calendar-picker-indicator {
+  opacity: 0.4; cursor: pointer; width: 14px; height: 14px;
+}
+
+/* Break cell */
+.manual-break-cell {
+  min-width: 160px;
+  padding: 0.7rem 1rem;
+  border-right: 1.5px solid var(--border);
+  background: transparent;
+  transition: background 0.15s;
+}
+.manual-break-cell:focus-within { background: #fff; }
+
+.manual-break-chips { display: flex; gap: 0.3rem; flex-wrap: wrap; margin-top: 0.25rem; }
+
+.manual-break-chip {
+  padding: 0.18rem 0.55rem;
+  border: 1.5px solid var(--border);
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: #fff;
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+  user-select: none;
+}
+.manual-break-chip:hover { border-color: var(--warning); color: var(--warning); background: var(--warning-light); }
+.manual-break-chip.active {
+  border-color: var(--warning);
+  color: var(--warning);
+  background: var(--warning-light);
+  box-shadow: 0 0 0 1.5px rgba(217,119,6,0.15);
+}
+
+.manual-break-custom { display: flex; align-items: center; gap: 0.3rem; margin-top: 0.4rem; }
+.manual-break-custom input {
+  width: 52px; padding: 0.2rem 0.4rem;
+  border: 1.5px solid var(--border); border-radius: 6px;
+  font-size: 0.8rem; font-family: inherit; font-weight: 600;
+  color: var(--text); background: var(--bg-subtle); outline: none;
+  text-align: center; transition: var(--transition);
+}
+.manual-break-custom input:focus { border-color: var(--warning); background: #fff; box-shadow: 0 0 0 2px rgba(217,119,6,0.12); }
+.manual-break-custom span { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; white-space: nowrap; }
+
+/* Save button cell */
+.manual-save-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1.1rem;
+  background: transparent;
+}
+.manual-save-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: var(--transition);
+  letter-spacing: 0.01em;
+}
+.manual-save-btn:hover  { background: var(--primary-dark); box-shadow: 0 4px 12px rgba(37,99,235,0.25); transform: translateY(-1px); }
+.manual-save-btn:active { transform: scale(0.97); box-shadow: none; }
+
+/* Live hours preview row */
+.manual-preview-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.85rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.manual-hours-preview { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--text-muted); }
+.manual-hours-preview strong { font-size: 0.92rem; font-weight: 800; color: var(--text); letter-spacing: -0.02em; }
+
+.manual-hours-badge {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.2rem 0.65rem; border-radius: 99px;
+  font-size: 0.72rem; font-weight: 700; border: 1px solid;
+  transition: var(--transition);
+}
+.manual-hours-badge.valid   { background: var(--success-light); color: var(--success);    border-color: var(--success-border); }
+.manual-hours-badge.invalid { background: var(--danger-light);  color: var(--danger);     border-color: var(--danger-border); }
+.manual-hours-badge.empty   { background: var(--bg-inset);      color: var(--text-faint); border-color: var(--border); }
+
+/* ─────────────────────────────────────────────────────────────
+   Responsive
+───────────────────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .manual-strip { grid-template-columns: 1fr 1fr; }
+  .manual-cell  { border-bottom: 1.5px solid var(--border); }
+  .manual-cell:nth-child(2n)  { border-right: none; }
+  .manual-break-cell { border-right: none; border-bottom: 1.5px solid var(--border); grid-column: span 2; }
+  .manual-save-cell  { grid-column: span 2; padding: 0.85rem 1rem; }
+  .manual-save-btn   { width: 100%; justify-content: center; }
+}
+
+@media (max-width: 640px) {
+  .dtr-clock   { font-size: 3rem; }
+  .dtr-buttons { flex-direction: column; align-items: center; }
+  .btn-in, .btn-out { width: 200px; }
+  .break-options { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 520px) {
+  .manual-strip { grid-template-columns: 1fr; }
+  .manual-cell, .manual-break-cell { border-right: none; }
+  .manual-break-cell { grid-column: 1; }
+  .manual-save-cell  { grid-column: 1; }
+}

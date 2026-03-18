@@ -4,18 +4,24 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>OJT Tracker — Daily Time Record</title>
-  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/global.css"/>
+  <link rel="stylesheet" href="css/pages/dtr.css"/>
 </head>
 <body>
 
-<!-- Edit Record Modal -->
+<!-- ══════════════════════════════════════════════════════════
+     EDIT RECORD MODAL
+══════════════════════════════════════════════════════════ -->
 <div class="break-modal-overlay hidden" id="edit-modal-overlay">
-  <div class="break-modal" style="max-width:460px;">
-    <div class="break-modal-title">✏️ Edit Attendance Record</div>
-    <div class="break-modal-sub">Update the details for this attendance entry.</div>
+  <div class="break-modal" style="max-width:480px;">
+
+    <div class="break-modal-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Edit Attendance Record
+    </div>
+    <div class="break-modal-sub">Update the time details for this attendance entry.</div>
 
     <input type="hidden" id="edit-record-id"/>
-
     <div id="edit-modal-status" class="alert hidden" style="margin-bottom:1rem;"></div>
 
     <div class="form-row" style="margin-bottom:0;">
@@ -46,11 +52,13 @@
   </div>
 </div>
 
-<!-- Delete Confirm Modal -->
+<!-- ══════════════════════════════════════════════════════════
+     DELETE CONFIRM MODAL
+══════════════════════════════════════════════════════════ -->
 <div class="break-modal-overlay hidden" id="delete-modal-overlay">
-  <div class="break-modal" style="max-width:380px; text-align:center;">
-    <div style="font-size:2rem; margin-bottom:0.75rem;">🗑️</div>
-    <div class="break-modal-title" style="justify-content:center;">Delete Record?</div>
+  <div class="break-modal" style="max-width:400px; text-align:center;">
+    <div style="width:52px; height:52px; background:#fef2f2; border:1.5px solid #fecaca; border-radius:50%; margin:0 auto 1rem; display:flex; align-items:center; justify-content:center; font-size:1.4rem;">🗑️</div>
+    <div class="break-modal-title" style="justify-content:center; font-size:1rem;">Delete Record?</div>
     <div class="break-modal-sub" style="margin-bottom:1.5rem;">
       This will permanently remove the attendance entry for <strong id="delete-record-date"></strong>. This action cannot be undone.
     </div>
@@ -62,11 +70,16 @@
   </div>
 </div>
 
-<!-- Break Time Modal -->
+<!-- ══════════════════════════════════════════════════════════
+     BREAK TIME MODAL
+══════════════════════════════════════════════════════════ -->
 <div class="break-modal-overlay hidden" id="break-modal-overlay">
   <div class="break-modal">
-    <div class="break-modal-title">⏱ Select Break Duration</div>
-    <div class="break-modal-sub">How long was your break today? This will be deducted from your total working hours.</div>
+    <div class="break-modal-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Select Break Duration
+    </div>
+    <div class="break-modal-sub">How long was your break? This will be deducted from your total working hours.</div>
 
     <div class="break-options" id="break-options">
       <div class="break-option" data-mins="0" onclick="selectBreak(0)">
@@ -100,7 +113,10 @@
 
     <div class="break-modal-actions">
       <button class="btn btn-outline" onclick="cancelTimeOut()">Cancel</button>
-      <button class="btn btn-primary" onclick="confirmTimeOut()">Confirm Time Out</button>
+      <button class="btn btn-primary" onclick="confirmTimeOut()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Confirm Time Out
+      </button>
     </div>
   </div>
 </div>
@@ -118,7 +134,7 @@
     <div class="nav-section-label">Main Menu</div>
     <nav>
       <a href="dashboard.html" class="nav-link">
-        <svg class="nav-icon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <svg class="nav-icon-svg" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
         Dashboard
       </a>
       <a href="dtr.html" class="nav-link active">
@@ -147,115 +163,270 @@
           <div class="sidebar-user-role">OJT Student</div>
         </div>
       </div>
-      <button class="btn btn-ghost btn-sm full-width" onclick="logoutUser()">Sign Out</button>
+      <button class="btn btn-ghost btn-sm full-width" onclick="logoutUser()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign Out
+      </button>
     </div>
   </aside>
 
   <main class="main">
+
+    <!-- ── Page Header ── -->
     <div class="page-header">
       <div class="page-header-left">
-        <div class="breadcrumb">Home <span class="breadcrumb-sep"> / </span><span>Daily Time Record</span></div>
-        <h1>Daily Time Record</h1>
-        <p>Record your daily time in and time out for attendance tracking.</p>
+        <div class="breadcrumb">
+          Home <span class="breadcrumb-sep">›</span> <span class="current">Daily Time Record</span>
+        </div>
+        <h1>
+          <span class="page-title-icon page-title-icon-green">🕐</span>
+          Daily Time Record
+        </h1>
+        <p>Record your daily attendance. Break time is automatically deducted from net hours.</p>
       </div>
     </div>
 
-    <!-- Clock Panel -->
+    <!-- ── Clock Hero Panel ── -->
     <div class="dtr-hero">
       <div class="dtr-hero-grid"></div>
       <div class="dtr-date" id="today-date"></div>
-      <div class="dtr-clock" id="live-clock">00<span class="dtr-clock-sep">:</span>00<span class="dtr-clock-sep">:</span>00</div>
+      <div class="dtr-clock" id="live-clock">
+        00<span class="dtr-clock-sep">:</span>00<span class="dtr-clock-sep">:</span>00
+      </div>
 
-      <!-- Break info pill (shown when timed in) -->
       <div class="dtr-break-info hidden" id="break-info-pill">
         <div class="dtr-break-info-dot"></div>
         <span id="break-info-text">Break not yet set</span>
       </div>
 
       <div class="dtr-status-wrap">
-        <div id="dtr-status" class="alert hidden" style="max-width:360px;"></div>
+        <div id="dtr-status" class="alert hidden" style="max-width:380px;"></div>
       </div>
+
       <div class="dtr-buttons">
-        <button class="btn btn-in"  onclick="timeIn()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>
+        <button class="btn-in" onclick="timeIn()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>
           Time In
         </button>
-        <button class="btn btn-out" onclick="openBreakModal()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <button class="btn-out" onclick="openBreakModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           Time Out
         </button>
       </div>
     </div>
 
-    <!-- Manual Entry -->
+    <!-- ── Manual Entry ── -->
     <div class="card" style="margin-bottom:1.25rem;">
       <div class="card-header" style="cursor:pointer; margin-bottom:0;" onclick="toggleManual()">
-        <div class="card-title">Manual Entry</div>
-        <button class="btn btn-outline btn-sm" id="manual-toggle-btn" onclick="event.stopPropagation(); toggleManual()">+ Add Past Entry</button>
-      </div>
-      <div class="collapsible" id="manual-form">
-        <div style="padding-top:1.25rem; border-top:1px solid var(--border-light); margin-top:1.25rem;">
-          <div class="divider">Enter a previous date's attendance record</div>
-          <div id="manual-status" class="alert hidden"></div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Date</label>
-              <input type="date" id="manual-date"/>
-            </div>
-            <div class="form-group">
-              <label>Time In</label>
-              <input type="time" id="manual-time-in"/>
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Time Out</label>
-              <input type="time" id="manual-time-out"/>
-            </div>
-            <div class="form-group">
-              <label>Break Duration (minutes)</label>
-              <input type="number" id="manual-break" min="0" max="480" placeholder="e.g. 60" value="60"/>
-            </div>
-          </div>
-          <button class="btn btn-primary" style="margin-top:0.25rem;" onclick="submitManualDTR()">Save Entry</button>
+        <div>
+          <div class="card-title">Manual Entry</div>
+          <div class="card-subtitle">Add a past attendance record for a previous date</div>
         </div>
+        <button class="btn btn-outline btn-sm" id="manual-toggle-btn"
+          onclick="event.stopPropagation(); toggleManual()">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Add Past Entry
+        </button>
       </div>
-    </div>
 
-    <!-- Attendance Table -->
+      <div class="collapsible" id="manual-form">
+        <div class="manual-entry-body">
+
+          <!-- Hint bar -->
+          <div class="manual-entry-hint">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            Fill in the date, time in, and time out — break time will be deducted from the total.
+          </div>
+
+          <div id="manual-status" class="alert hidden" style="margin-bottom:1rem;"></div>
+
+          <!-- ── Entry Strip ── -->
+          <div class="manual-strip" id="manual-strip">
+
+            <!-- Date -->
+            <div class="manual-cell">
+              <div class="manual-cell-label">
+                <span class="manual-cell-label-dot dot-date"></span>Date
+              </div>
+              <input type="date" id="manual-date" onchange="updateManualPreview()"/>
+            </div>
+
+            <!-- Time In -->
+            <div class="manual-cell">
+              <div class="manual-cell-label">
+                <span class="manual-cell-label-dot dot-in"></span>Time In
+              </div>
+              <input type="time" id="manual-time-in" onchange="updateManualPreview()"/>
+            </div>
+
+            <!-- Time Out -->
+            <div class="manual-cell">
+              <div class="manual-cell-label">
+                <span class="manual-cell-label-dot dot-out"></span>Time Out
+              </div>
+              <input type="time" id="manual-time-out" onchange="updateManualPreview()"/>
+            </div>
+
+            <!-- Break -->
+            <div class="manual-break-cell">
+              <div class="manual-cell-label">
+                <span class="manual-cell-label-dot dot-break"></span>Break
+              </div>
+              <div class="manual-break-chips">
+                <span class="manual-break-chip" data-mins="0"  onclick="setManualBreak(0)">None</span>
+                <span class="manual-break-chip" data-mins="15" onclick="setManualBreak(15)">15 min</span>
+                <span class="manual-break-chip" data-mins="30" onclick="setManualBreak(30)">30 min</span>
+                <span class="manual-break-chip active" data-mins="60" onclick="setManualBreak(60)">1 hr</span>
+              </div>
+              <div class="manual-break-custom">
+                <input type="number" id="manual-break" min="0" max="480" value="60"
+                  placeholder="mins" oninput="onManualBreakCustom(this.value)"/>
+                <span>min</span>
+              </div>
+            </div>
+
+            <!-- Save -->
+            <div class="manual-save-cell">
+              <button class="manual-save-btn" onclick="submitManualDTR()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Save Entry
+              </button>
+            </div>
+
+          </div><!-- /.manual-strip -->
+
+          <!-- ── Live hours preview ── -->
+          <div class="manual-preview-row">
+            <div class="manual-hours-preview">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                style="color:var(--text-faint);">
+                <circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 12"/>
+              </svg>
+              Estimated net hours:
+              <span class="manual-hours-badge empty" id="manual-preview-badge">—</span>
+            </div>
+            <span style="font-size:0.72rem; color:var(--text-faint);">Break is deducted automatically</span>
+          </div>
+
+        </div><!-- /.manual-entry-body -->
+      </div><!-- /.collapsible -->
+    </div><!-- /.card -->
+
+    <!-- ── Attendance History Table ── -->
     <div class="card">
       <div class="card-header">
-        <div class="card-title">Attendance History</div>
+        <div>
+          <div class="card-title">Attendance History</div>
+          <div class="card-subtitle">All recorded time-in and time-out entries</div>
+        </div>
         <span class="badge badge-muted" id="total-days-badge">0 days</span>
       </div>
       <div class="table-wrap">
         <table class="table">
           <thead>
             <tr>
-              <th>#</th>
+              <th style="width:44px;">#</th>
               <th>Date</th>
               <th>Time In</th>
               <th>Time Out</th>
               <th>Break</th>
               <th>Net Hours</th>
               <th>Status</th>
-              <th style="text-align:center;">Actions</th>
+              <th style="text-align:center; width:90px;">Actions</th>
             </tr>
           </thead>
           <tbody id="dtr-body">
-            <tr><td colspan="8"><div class="empty-state"><p>No records found. Click Time In to start recording attendance.</p></div></td></tr>
+            <tr>
+              <td colspan="8">
+                <div class="empty-state">
+                  <div class="empty-state-icon">📋</div>
+                  <h3>No records found</h3>
+                  <p>Click Time In to start recording your attendance.</p>
+                </div>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
     </div>
+
   </main>
 </div>
 
 <script src="js/auth.js"></script>
 <script src="js/dtr.js"></script>
 <script>
-  function openSidebar()  { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebar-overlay').classList.add('show'); }
-  function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('show'); }
+  /* ── Sidebar ── */
+  function openSidebar()  {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebar-overlay').classList.add('show');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('show');
+  }
+
+  /* ── Manual Entry — break chip selector ── */
+  function setManualBreak(mins) {
+    document.getElementById('manual-break').value = mins;
+    document.querySelectorAll('.manual-break-chip').forEach(c => {
+      c.classList.toggle('active', parseInt(c.dataset.mins) === mins);
+    });
+    updateManualPreview();
+  }
+
+  function onManualBreakCustom(val) {
+    const mins = parseInt(val);
+    if (!isNaN(mins) && mins >= 0) {
+      /* deactivate all preset chips when a custom value is typed */
+      document.querySelectorAll('.manual-break-chip').forEach(c => c.classList.remove('active'));
+    }
+    updateManualPreview();
+  }
+
+  /* ── Manual Entry — live hours preview ── */
+  function updateManualPreview() {
+    const timeIn  = document.getElementById('manual-time-in').value;
+    const timeOut = document.getElementById('manual-time-out').value;
+    const brk     = parseInt(document.getElementById('manual-break').value) || 0;
+    const badge   = document.getElementById('manual-preview-badge');
+
+    if (!timeIn || !timeOut) {
+      badge.textContent = '—';
+      badge.className   = 'manual-hours-badge empty';
+      return;
+    }
+
+    const [ih, im] = timeIn.split(':').map(Number);
+    const [oh, om] = timeOut.split(':').map(Number);
+    const totalMins = (oh * 60 + om) - (ih * 60 + im) - brk;
+
+    if (totalMins <= 0) {
+      badge.textContent = 'Invalid range';
+      badge.className   = 'manual-hours-badge invalid';
+      return;
+    }
+
+    const hrs  = Math.floor(totalMins / 60);
+    const mins = totalMins % 60;
+    const label = hrs > 0
+      ? (mins > 0 ? `${hrs}h ${mins}m` : `${hrs} hr${hrs !== 1 ? 's' : ''}`)
+      : `${mins} min`;
+
+    badge.textContent = label;
+    badge.className   = 'manual-hours-badge valid';
+  }
 </script>
 </body>
 </html>
