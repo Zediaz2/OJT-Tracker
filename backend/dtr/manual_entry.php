@@ -19,9 +19,8 @@ if ($break_minutes < 0 || $break_minutes > 480) {
 
 // Check if record already exists for that date
 $check = $conn->prepare("SELECT id FROM dtr_records WHERE user_id = ? AND date = ?");
-$check->bind_param("is", $user_id, $date);
-$check->execute();
-if ($check->get_result()->num_rows > 0) {
+$check->execute([$user_id, $date]);
+if ($check->fetch()) {
     echo json_encode(['error' => 'A record for this date already exists']); exit;
 }
 
@@ -37,9 +36,8 @@ $total_hours = round($net_minutes / 60, 2);
 $stmt = $conn->prepare(
     "INSERT INTO dtr_records (user_id, date, time_in, time_out, total_hours, break_minutes) VALUES (?, ?, ?, ?, ?, ?)"
 );
-$stmt->bind_param("isssdi", $user_id, $date, $time_in, $time_out, $total_hours, $break_minutes);
 
-if ($stmt->execute()) {
+if ($stmt->execute([$user_id, $date, $time_in, $time_out, $total_hours, $break_minutes])) {
     echo json_encode([
         'success'       => true,
         'total_hours'   => $total_hours,

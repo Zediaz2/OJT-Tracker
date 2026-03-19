@@ -1,14 +1,17 @@
 <?php
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');        // leave empty if no XAMPP password
-define('DB_NAME', 'ojt_tracker');
+$db_file = __DIR__ . '/../../database/ojt_tracker.sqlite';
 
-$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-
-if ($conn->connect_error) {
+try {
+    // Connect to SQLite database
+    $conn = new PDO('sqlite:' . $db_file);
+    
+    // Enable exceptions on errors
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    // Set default fetch mode to associative array
+    $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
     http_response_code(500);
-    die(json_encode(['error' => 'Database connection failed: ' . $conn->connect_error]));
+    die(json_encode(['error' => 'Database connection failed: ' . $e->getMessage()]));
 }
 
 header('Content-Type: application/json');

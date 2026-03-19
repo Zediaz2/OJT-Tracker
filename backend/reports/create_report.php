@@ -14,10 +14,9 @@ if (!$user_id || !$week_start || !$week_end || !$title || !$description) {
 }
 
 $stmt = $conn->prepare("INSERT INTO weekly_reports (user_id, week_start, week_end, title, description, working_hours) VALUES (?, ?, ?, ?, ?, ?)");
-$stmt->bind_param("issssd", $user_id, $week_start, $week_end, $title, $description, $working_hours);
 
-if ($stmt->execute()) {
-    echo json_encode(['success' => true, 'report_id' => $conn->insert_id]);
+if ($stmt->execute([$user_id, $week_start, $week_end, $title, $description, $working_hours])) {
+    echo json_encode(['success' => true, 'report_id' => $conn->lastInsertId()]);
 } else {
     echo json_encode(['error' => 'Failed to save report']);
 }

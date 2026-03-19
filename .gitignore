@@ -1,0 +1,4 @@
+*.sqlite
+*.sqlite-journal
+frontend/uploads/*
+!frontend/uploads/.gitkeep
