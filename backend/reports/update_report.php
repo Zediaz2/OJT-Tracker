@@ -26,25 +26,22 @@ if ($week_start > $week_end) {
 // ── Verify ownership ──────────────────────────────────────
 // Table name: weekly_reports (matches create_report.php and get_reports.php)
 $check = $conn->prepare("SELECT id FROM weekly_reports WHERE id = ? AND user_id = ?");
-$check->bind_param("ii", $report_id, $user_id);
-$check->execute();
-$check->store_result();
-if ($check->num_rows === 0) {
+$check->execute([$report_id, $user_id]);
+if (!$check->fetch()) {
     echo json_encode(['success' => false, 'error' => 'Report not found or access denied.']);
     exit;
 }
-$check->close();
 
 // ── Update main record ────────────────────────────────────
 $upd = $conn->prepare(
     "UPDATE weekly_reports SET week_start = ?, week_end = ?, title = ?, description = ?, working_hours = ? WHERE id = ? AND user_id = ?"
 );
-$upd->bind_param("ssssdii", $week_start, $week_end, $title, $description, $working_hours, $report_id, $user_id);
-if (!$upd->execute()) {
-    echo json_encode(['success' => false, 'error' => 'Failed to update report: ' . $conn->error]);
+try {
+    $upd->execute([$week_start, $week_end, $title, $description, $working_hours, $report_id, $user_id]);
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'error' => 'Failed to update report: ' . $e->getMessage()]);
     exit;
 }
-$upd->close();
 
 // ── Remove marked images ──────────────────────────────────
 // Column name: file_path (matches upload_image.php and get_reports.php)
@@ -57,9 +54,7 @@ if (!empty($remove_images) && is_array($remove_images)) {
 
         // Delete DB record
         $del = $conn->prepare("DELETE FROM report_images WHERE report_id = ? AND file_path = ?");
-        $del->bind_param("is", $report_id, $filePath);
-        $del->execute();
-        $del->close();
+        $del->execute([$report_id, $filePath]);
 
         // Delete physical file (sandboxed to uploads dir only)
         $fullPath = realpath(__DIR__ . '/../../frontend/' . $filePath);

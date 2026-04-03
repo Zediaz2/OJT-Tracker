@@ -11,12 +11,11 @@ $stmt = $conn->prepare("
     GROUP BY r.id
     ORDER BY r.submitted_at DESC
 ");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
+$stmt->execute([$user_id]);
+$result = $stmt->fetchAll();
 
 $reports = [];
-while ($row = $result->fetch_assoc()) {
+foreach ($result as $row) {
     $row['images'] = $row['images'] ? explode(',', $row['images']) : [];
     $reports[] = $row;
 }

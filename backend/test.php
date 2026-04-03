@@ -1,14 +1,14 @@
 <?php
-$conn = new mysqli('localhost', 'root', '', 'ojt_tracker');
+require_once __DIR__ . '/config/db.php';
 
-if ($conn->connect_error) {
-    echo "DB FAILED: " . $conn->connect_error;
-} else {
+try {
     echo "DB CONNECTED OK";
     $res = $conn->query("SELECT email, password FROM users");
-    while ($row = $res->fetch_assoc()) {
+    while ($row = $res->fetch()) {
         echo "<br>Email: " . $row['email'];
         echo "<br>Hash: " . $row['password'];
     }
+} catch (Exception $e) {
+    echo "DB FAILED: " . $e->getMessage();
 }
 ?>

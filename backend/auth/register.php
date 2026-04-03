@@ -32,9 +32,8 @@ if (strlen($password) < 6) {
 
 // Check if email already exists
 $check = $conn->prepare("SELECT id FROM users WHERE email = ?");
-$check->bind_param("s", $email);
-$check->execute();
-if ($check->get_result()->num_rows > 0) {
+$check->execute([$email]);
+if ($check->fetch()) {
     echo json_encode(['error' => 'An account with that email already exists']); exit;
 }
 
@@ -45,9 +44,8 @@ $stmt = $conn->prepare("
     INSERT INTO users (full_name, email, password, school, company, required_hours)
     VALUES (?, ?, ?, ?, ?, ?)
 ");
-$stmt->bind_param("sssssi", $name, $email, $hashed, $school, $company, $required_hours);
 
-if ($stmt->execute()) {
+if ($stmt->execute([$name, $email, $hashed, $school, $company, $required_hours])) {
     echo json_encode(['success' => true, 'message' => 'Account created successfully']);
 } else {
     echo json_encode(['error' => 'Failed to create account. Please try again.']);

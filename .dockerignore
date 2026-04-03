@@ -1,0 +1,6 @@
+.git
+.gitignore
+.antigravityignore
+README.md
+database/ojt_tracker.sqlite
+frontend/uploads/*

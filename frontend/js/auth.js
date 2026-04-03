@@ -1,5 +1,4 @@
-// Base API URL — single declaration, used by all pages
-const API = 'http://localhost/OJT-Tracker/backend';
+const API = window.location.origin.includes('localhost') ? 'http://localhost:8000/backend' : '/backend';
 
 function getUser() {
   const u = localStorage.getItem('ojt_user');
