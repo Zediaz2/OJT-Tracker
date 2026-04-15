@@ -12,7 +12,11 @@ let quillEditors = {};
 function initQuillEditors() {
   // Custom font size options (8px to 24px only)
   const fontSizeOptions = ['8px', '10px', '12px', '14px', '16px', '18px', '20px', '22px', '24px'];
-  Quill.register(Quill.modules.Clipboard);
+  
+  // Register custom font size format with Quill
+  const Size = Quill.import('formats/size');
+  Size.whitelist = fontSizeOptions;
+  Quill.register(Size, true);
 
   // Toolbar configuration for the submit form editor
   const submitToolbarOptions = [
@@ -167,11 +171,17 @@ function setEditorContent(editorKey, delta) {
   // Handle both object and string input
   let deltaObj;
   if (typeof delta === 'string') {
-    try {
-      deltaObj = JSON.parse(delta);
-    } catch (e) {
-      console.warn('Invalid Delta JSON, attempting fallback to plain text');
-      // Fallback: treat as plain text
+    // Only try to parse if it looks like JSON (starts with { or [)
+    const trimmed = delta.trim();
+    if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+      try {
+        deltaObj = JSON.parse(delta);
+      } catch (e) {
+        console.warn('Invalid Delta JSON, attempting fallback to plain text');
+        deltaObj = plainTextToDelta(delta);
+      }
+    } else {
+      // Doesn't look like JSON, treat as plain text
       deltaObj = plainTextToDelta(delta);
     }
   } else if (!delta || typeof delta !== 'object') {
@@ -210,17 +220,30 @@ function clearEditor(editorKey) {
  * @returns {string} HTML string
  */
 function deltaToHTML(delta) {
+  // Handle null/undefined
+  if (!delta) return '';
+
   // Handle string input
   let deltaObj;
   if (typeof delta === 'string') {
-    try {
-      deltaObj = JSON.parse(delta);
-    } catch (e) {
-      console.error('Invalid Delta JSON:', e);
-      return '';
+    // Only try to parse if it looks like JSON (starts with { or [)
+    const trimmed = delta.trim();
+    if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+      try {
+        deltaObj = JSON.parse(delta);
+      } catch (e) {
+        // If JSON parsing fails, treat as plain text
+        console.warn('Invalid Delta JSON, treating as plain text');
+        deltaObj = plainTextToDelta(delta);
+      }
+    } else {
+      // Doesn't look like JSON, treat as plain text
+      deltaObj = plainTextToDelta(delta);
     }
-  } else {
+  } else if (typeof delta === 'object') {
     deltaObj = delta;
+  } else {
+    return '';
   }
 
   if (!deltaObj || !deltaObj.ops) return '';

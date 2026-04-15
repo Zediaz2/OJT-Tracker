@@ -167,11 +167,14 @@ function submitReport() {
   const week_start  = document.getElementById('week_start').value;
   const week_end    = document.getElementById('week_end').value;
   const title       = document.getElementById('report_title').value.trim();
-  const description = document.getElementById('report_desc').value.trim();
   const working_hours = parseFloat(document.getElementById('report_hours').value) || 0;
   const statusEl    = document.getElementById('report-status');
 
-  if (!week_start || !week_end || !title || !description) {
+  // Get description from Quill editor
+  const description = getEditorContent('submit');
+
+  // Validate required fields
+  if (!week_start || !week_end || !title || isEditorEmpty('submit')) {
     showAlert(statusEl, 'Please complete all required fields before submitting.', 'error'); return;
   }
   if (week_start > week_end) {
@@ -210,9 +213,10 @@ function submitReport() {
 }
 
 function clearForm() {
-  ['week_start','week_end','report_title','report_hours','report_desc','report_images'].forEach(id => {
+  ['week_start','week_end','report_title','report_hours','report_images'].forEach(id => {
     document.getElementById(id).value = '';
   });
+  clearEditor('submit');
   submitFileQueue.length = 0;
   document.getElementById('image-preview').innerHTML = '';
   document.getElementById('submit-file-count').classList.add('hidden');
@@ -300,7 +304,9 @@ function loadReports() {
           </div>
 
           <!-- Description -->
-          <p style="color:var(--text-muted); line-height:1.7; font-size:0.875rem; margin-bottom:${r.images && r.images.length ? '0.75rem' : '0'}; white-space:pre-wrap; word-break:break-word; overflow-wrap:break-word;">${r.description}</p>
+          <div style="color:var(--text-muted); line-height:1.7; font-size:0.875rem; margin-bottom:${r.images && r.images.length ? '0.75rem' : '0'}; word-break:break-word; overflow-wrap:break-word;">
+            ${deltaToHTML(r.description)}
+          </div>
 
           <!-- Images -->
           ${r.images && r.images.length ? `
@@ -378,11 +384,36 @@ function openEditModal(id) {
   document.getElementById('edit-week-end').value     = r.week_end;
   document.getElementById('edit-title').value        = r.title;
   document.getElementById('edit-hours').value        = r.working_hours || '';
-  document.getElementById('edit-desc').value         = r.description;
   document.getElementById('edit-new-images').value   = '';
   document.getElementById('edit-new-preview').innerHTML = '';
   document.getElementById('edit-file-count').classList.add('hidden');
   document.getElementById('edit-status').classList.add('hidden');
+
+  // Clear editor first to ensure clean state
+  clearEditor('edit');
+
+  // Load description into Quill editor (handle both Delta and plain text)
+  if (r.description) {
+    console.log('Loading description:', r.description.substring(0, 100));
+    try {
+      // Try to parse as Delta JSON
+      const parsed = JSON.parse(r.description);
+      if (parsed && parsed.ops) {
+        console.log('✓ Parsed as Delta JSON');
+        setEditorContent('edit', parsed);
+      } else {
+        // Not valid Delta, treat as plain text
+        console.log('✓ Treating as plain text (not valid Delta)');
+        setEditorContent('edit', plainTextToDelta(r.description));
+      }
+    } catch (e) {
+      // If Delta parse fails, treat as plain text and convert
+      console.log('✓ JSON parse failed, treating as plain text:', e.message);
+      setEditorContent('edit', plainTextToDelta(r.description));
+    }
+  } else {
+    console.warn('No description in report');
+  }
 
   const btn = document.getElementById('edit-save-btn');
   btn.textContent = 'Save Changes';
@@ -408,8 +439,16 @@ function openEditModal(id) {
     grid.innerHTML = '';
   }
 
+  // Show modal
   document.getElementById('edit-modal-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
+  
+  // Refresh editor display after modal becomes visible
+  // Use requestAnimationFrame to ensure DOM has updated
+  requestAnimationFrame(() => {
+    console.log('Refreshing editor display...');
+    refreshEditorDisplay('edit');
+  });
 }
 
 function closeEditModal() {
@@ -448,12 +487,12 @@ function saveEditReport() {
   const week_start    = document.getElementById('edit-week-start').value;
   const week_end      = document.getElementById('edit-week-end').value;
   const title         = document.getElementById('edit-title').value.trim();
-  const description   = document.getElementById('edit-desc').value.trim();
+  const description   = getEditorContent('edit');
   const working_hours = parseFloat(document.getElementById('edit-hours').value) || 0;
   const statusEl      = document.getElementById('edit-status');
   const btn           = document.getElementById('edit-save-btn');
 
-  if (!week_start || !week_end || !title || !description) {
+  if (!week_start || !week_end || !title || isEditorEmpty('edit')) {
     showAlert(statusEl, 'All fields are required.', 'error'); return;
   }
   if (week_start > week_end) {
@@ -660,12 +699,12 @@ function buildSTIPage(report, reportNumber, totalReports, profile, logoBase64) {
   <!-- ══ DOCUMENTATION PHOTOS (outside table) ══ -->
   ${photosBlock}
 
-  <!-- ══ ACCOMPLISHMENTS ══ -->
-  <div class="accomplishments-section">
-    <p class="accomplishments-heading">Weekly Accomplishments</p>
-    <p class="accomplishments-instruction">The student trainee should give a summary of the tasks performed during the week and how it was accomplished.</p>
-    <div class="accomplishments-box">${report.description.replace(/\n/g, '<br/>')}</div>
-  </div>
+   <!-- ══ ACCOMPLISHMENTS ══ -->
+   <div class="accomplishments-section">
+     <p class="accomplishments-heading">Weekly Accomplishments</p>
+     <p class="accomplishments-instruction">The student trainee should give a summary of the tasks performed during the week and how it was accomplished.</p>
+     <div class="accomplishments-box">${deltaToHTML(report.description)}</div>
+   </div>
 
   <!-- ══ BOTTOM BLOCK — always pinned to page bottom ══ -->
   <div class="page-bottom">
