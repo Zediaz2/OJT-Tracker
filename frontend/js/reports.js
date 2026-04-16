@@ -170,11 +170,11 @@ function submitReport() {
   const working_hours = parseFloat(document.getElementById('report_hours').value) || 0;
   const statusEl    = document.getElementById('report-status');
 
-  // Get description from Quill editor
-  const description = getEditorContent('submit');
+  // Get description from vanilla RTE editor
+  const description = getRTEContent('report_desc_editor');
 
   // Validate required fields
-  if (!week_start || !week_end || !title || isEditorEmpty('submit')) {
+  if (!week_start || !week_end || !title || isRTEEmpty('report_desc_editor')) {
     showAlert(statusEl, 'Please complete all required fields before submitting.', 'error'); return;
   }
   if (week_start > week_end) {
@@ -216,7 +216,7 @@ function clearForm() {
   ['week_start','week_end','report_title','report_hours','report_images'].forEach(id => {
     document.getElementById(id).value = '';
   });
-  clearEditor('submit');
+  clearRTEContent('report_desc_editor');
   submitFileQueue.length = 0;
   document.getElementById('image-preview').innerHTML = '';
   document.getElementById('submit-file-count').classList.add('hidden');
@@ -305,7 +305,7 @@ function loadReports() {
 
           <!-- Description -->
           <div style="color:var(--text-muted); line-height:1.7; font-size:0.875rem; margin-bottom:${r.images && r.images.length ? '0.75rem' : '0'}; word-break:break-word; overflow-wrap:break-word;">
-            ${deltaToHTML(r.description)}
+            ${r.description}
           </div>
 
           <!-- Images -->
@@ -390,29 +390,11 @@ function openEditModal(id) {
   document.getElementById('edit-status').classList.add('hidden');
 
   // Clear editor first to ensure clean state
-  clearEditor('edit');
+  clearRTEContent('edit_desc_editor');
 
-  // Load description into Quill editor (handle both Delta and plain text)
+  // Load description into vanilla RTE editor
   if (r.description) {
-    console.log('Loading description:', r.description.substring(0, 100));
-    try {
-      // Try to parse as Delta JSON
-      const parsed = JSON.parse(r.description);
-      if (parsed && parsed.ops) {
-        console.log('✓ Parsed as Delta JSON');
-        setEditorContent('edit', parsed);
-      } else {
-        // Not valid Delta, treat as plain text
-        console.log('✓ Treating as plain text (not valid Delta)');
-        setEditorContent('edit', plainTextToDelta(r.description));
-      }
-    } catch (e) {
-      // If Delta parse fails, treat as plain text and convert
-      console.log('✓ JSON parse failed, treating as plain text:', e.message);
-      setEditorContent('edit', plainTextToDelta(r.description));
-    }
-  } else {
-    console.warn('No description in report');
+    setRTEContent('edit_desc_editor', r.description);
   }
 
   const btn = document.getElementById('edit-save-btn');
@@ -442,13 +424,6 @@ function openEditModal(id) {
   // Show modal
   document.getElementById('edit-modal-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
-  
-  // Refresh editor display after modal becomes visible
-  // Use requestAnimationFrame to ensure DOM has updated
-  requestAnimationFrame(() => {
-    console.log('Refreshing editor display...');
-    refreshEditorDisplay('edit');
-  });
 }
 
 function closeEditModal() {
@@ -487,12 +462,12 @@ function saveEditReport() {
   const week_start    = document.getElementById('edit-week-start').value;
   const week_end      = document.getElementById('edit-week-end').value;
   const title         = document.getElementById('edit-title').value.trim();
-  const description   = getEditorContent('edit');
+  const description   = getRTEContent('edit_desc_editor');
   const working_hours = parseFloat(document.getElementById('edit-hours').value) || 0;
   const statusEl      = document.getElementById('edit-status');
   const btn           = document.getElementById('edit-save-btn');
 
-  if (!week_start || !week_end || !title || isEditorEmpty('edit')) {
+  if (!week_start || !week_end || !title || isRTEEmpty('edit_desc_editor')) {
     showAlert(statusEl, 'All fields are required.', 'error'); return;
   }
   if (week_start > week_end) {
@@ -703,7 +678,7 @@ function buildSTIPage(report, reportNumber, totalReports, profile, logoBase64) {
    <div class="accomplishments-section">
      <p class="accomplishments-heading">Weekly Accomplishments</p>
      <p class="accomplishments-instruction">The student trainee should give a summary of the tasks performed during the week and how it was accomplished.</p>
-     <div class="accomplishments-box">${deltaToHTML(report.description)}</div>
+      <div class="accomplishments-box">${report.description}</div>
    </div>
 
   <!-- ══ BOTTOM BLOCK — always pinned to page bottom ══ -->

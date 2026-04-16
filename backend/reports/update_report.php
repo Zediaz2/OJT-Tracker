@@ -9,7 +9,7 @@ $user_id       = intval($data['user_id']      ?? 0);
 $week_start    = trim($data['week_start']     ?? '');
 $week_end      = trim($data['week_end']       ?? '');
 $title         = trim($data['title']          ?? '');
-$description   = trim($data['description']    ?? '');
+$description   = $data['description']         ?? '';  // Keep as-is (may be Delta JSON or plain text)
 $working_hours = floatval($data['working_hours'] ?? 0);
 $remove_images = $data['remove_images']       ?? [];  // array of file_path values e.g. "uploads/img_xxx.jpg"
 
@@ -20,6 +20,16 @@ if (!$report_id || !$user_id || !$week_start || !$week_end || !$title || !$descr
 }
 if ($week_start > $week_end) {
     echo json_encode(['success' => false, 'error' => 'Week end must be after week start.']);
+    exit;
+}
+
+// Sanitize title
+$title = htmlspecialchars($title, ENT_QUOTES, 'UTF-8');
+
+// Validate and sanitize description (plain HTML from vanilla RTE)
+$sanitized_description = sanitizeHTML($description);
+if (empty($sanitized_description)) {
+    echo json_encode(['success' => false, 'error' => 'Description cannot be empty.']);
     exit;
 }
 
@@ -39,7 +49,7 @@ $check->close();
 $upd = $conn->prepare(
     "UPDATE weekly_reports SET week_start = ?, week_end = ?, title = ?, description = ?, working_hours = ? WHERE id = ? AND user_id = ?"
 );
-$upd->bind_param("ssssdii", $week_start, $week_end, $title, $description, $working_hours, $report_id, $user_id);
+$upd->bind_param("ssssdii", $week_start, $week_end, $title, $sanitized_description, $working_hours, $report_id, $user_id);
 if (!$upd->execute()) {
     echo json_encode(['success' => false, 'error' => 'Failed to update report: ' . $conn->error]);
     exit;
@@ -70,4 +80,29 @@ if (!empty($remove_images) && is_array($remove_images)) {
 }
 
 echo json_encode(['success' => true]);
+
+/**
+ * Sanitize HTML content from vanilla RTE
+ * Allows basic formatting tags but strips dangerous content
+ */
+function sanitizeHTML($html) {
+    // Trim whitespace
+    $html = trim($html);
+    
+    if (empty($html)) {
+        return '';
+    }
+    
+    // Define allowed tags: basic formatting + lists
+    $allowed_tags = '<p><br><strong><em><u><s><ol><ul><li><h1><h2><h3><font><div><span>';
+    
+    // Strip tags that aren't in allowed list
+    $sanitized = strip_tags($html, $allowed_tags);
+    
+    // Additional security: remove event handlers and scripts
+    $sanitized = preg_replace('/<[^>]*on\w+\s*=[^>]*>/i', '', $sanitized);
+    $sanitized = preg_replace('/<script[^>]*>.*?<\/script>/i', '', $sanitized);
+    
+    return $sanitized;
+}
 ?>
