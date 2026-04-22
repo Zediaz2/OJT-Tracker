@@ -575,13 +575,30 @@ function confirmDeleteReport() {
 // ════════════════════════════════════════════════════════
 function getProfile() {
   const s = JSON.parse(localStorage.getItem('ojt_settings') || '{}');
-  const nameParts = user.name.trim().split(' ');
+  const nameParts = user.name.trim().split(/\s+/);
   const lastName  = nameParts.length > 1 ? nameParts[nameParts.length - 1] : user.name;
-  const firstName = nameParts.length > 1 ? nameParts.slice(0, -1).join(' ') : '';
+
+  // All parts before the last name
+  let beforeLast = nameParts.length > 1 ? nameParts.slice(0, -1) : [];
+
+  // Always detect and strip the middle-initial token from the name parts
+  // (single letter with optional trailing period, e.g. "G." or "G")
+  const miIndex = beforeLast.findIndex(p => /^[A-Za-z]\.?$/.test(p));
+  let detectedMI = '';
+  if (miIndex !== -1) {
+    const raw = beforeLast[miIndex];
+    detectedMI = raw.endsWith('.') ? raw : raw + '.'; // normalise to e.g. "G."
+    beforeLast  = beforeLast.filter((_, i) => i !== miIndex); // always remove from first name
+  }
+
+  // Prefer manually-saved MI from settings; fall back to auto-detected value
+  const mi        = s.mi || detectedMI;
+  const firstName = beforeLast.join(' ');
+
   return {
     lastName,
     firstName,
-    mi:            s.mi             || '',
+    mi,
     campus:        s.campus         || user.school  || '',
     program:       s.program        || '',
     yearLevel:     s.year_level     || '',
