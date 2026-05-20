@@ -396,3 +396,181 @@ function loadDTR() {
 }
 
 loadDTR();
+
+// ============================================================
+// EXPORT DTR TO PDF
+// ============================================================
+function exportToPDF() {
+  const btn = document.getElementById('export-pdf-btn');
+  btn.disabled = true;
+  btn.innerHTML = `
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite">
+      <path d="M21 12a9 9 0 1 1-6.22-8.56"/>
+    </svg>
+    Exporting…`;
+
+  fetch(`${API}/dtr/get_records.php?user_id=${user.id}`)
+    .then(r => r.json())
+    .then(data => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+      const records = data.records || [];
+      const exportDate = new Date().toLocaleDateString('en-US', {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+      const userName = user.name || 'Student';
+
+      // ── Header block ──────────────────────────────────────────
+      doc.setFillColor(30, 41, 59);           // dark navy
+      doc.rect(0, 0, 210, 32, 'F');
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(18);
+      doc.text('OJT Tracker', 14, 13);
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.text('Daily Time Record (DTR)', 14, 21);
+
+      doc.setFontSize(8.5);
+      doc.setTextColor(148, 163, 184);        // slate-400
+      doc.text(`Exported: ${exportDate}`, 14, 28);
+
+      // right-align student name
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.text(userName, 196, 13, { align: 'right' });
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(8.5);
+      doc.setTextColor(148, 163, 184);
+      doc.text('OJT Student', 196, 21, { align: 'right' });
+
+      // ── Summary pills ─────────────────────────────────────────
+      let totalNet = 0;
+      records.forEach(r => { if (r.total_hours) totalNet += parseFloat(r.total_hours); });
+      const completedDays = records.filter(r => r.time_out).length;
+
+      doc.setTextColor(30, 41, 59);
+      doc.setFontSize(8);
+
+      const pills = [
+        { label: 'Total Days',      value: `${records.length}` },
+        { label: 'Completed',       value: `${completedDays}` },
+        { label: 'Total Net Hours', value: `${totalNet.toFixed(2)} hrs` },
+      ];
+
+      let px = 14;
+      pills.forEach(p => {
+        doc.setFillColor(241, 245, 249);       // slate-100
+        doc.roundedRect(px, 36, 52, 14, 2, 2, 'F');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.setTextColor(30, 41, 59);
+        doc.text(p.value, px + 26, 43.5, { align: 'center' });
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7);
+        doc.setTextColor(100, 116, 139);
+        doc.text(p.label, px + 26, 48, { align: 'center' });
+        px += 56;
+      });
+
+      // ── Attendance table ──────────────────────────────────────
+      const head = [['#', 'Date', 'Time In', 'Time Out', 'Break', 'Net Hours', 'Status']];
+      const body = records.map((r, i) => {
+        const safeIn  = (r.time_in  || '').substring(0, 5);
+        const safeOut = (r.time_out || '').substring(0, 5);
+        return [
+          records.length - i,
+          r.date,
+          r.time_in  ? to12hr(safeIn)  : '—',
+          r.time_out ? to12hr(safeOut) : '—',
+          r.break_minutes > 0 ? `${r.break_minutes} min` : '—',
+          r.total_hours ? `${parseFloat(r.total_hours).toFixed(2)} hrs` : 'Ongoing',
+          r.time_out ? 'Complete' : 'In Progress',
+        ];
+      });
+
+      doc.autoTable({
+        startY: 56,
+        head,
+        body,
+        theme: 'grid',
+        styles: {
+          font: 'helvetica',
+          fontSize: 8.5,
+          cellPadding: 3.2,
+          textColor: [30, 41, 59],
+          lineColor: [226, 232, 240],
+          lineWidth: 0.3,
+        },
+        headStyles: {
+          fillColor: [30, 41, 59],
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+          fontSize: 8.5,
+        },
+        alternateRowStyles: { fillColor: [248, 250, 252] },
+        columnStyles: {
+          0: { halign: 'center', cellWidth: 10 },
+          2: { halign: 'center' },
+          3: { halign: 'center' },
+          4: { halign: 'center' },
+          5: { halign: 'center', fontStyle: 'bold' },
+          6: { halign: 'center' },
+        },
+        didDrawCell(hookData) {
+          // Color-code Status column (index 6)
+          if (hookData.section === 'body' && hookData.column.index === 6) {
+            const val = hookData.cell.raw;
+            const { x, y, width, height } = hookData.cell;
+            if (val === 'Complete') {
+              doc.setFillColor(220, 252, 231);
+              doc.setTextColor(22, 163, 74);
+            } else {
+              doc.setFillColor(254, 243, 199);
+              doc.setTextColor(161, 98, 7);
+            }
+            doc.rect(x, y, width, height, 'F');
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8);
+            doc.text(val, x + width / 2, y + height / 2 + 1, { align: 'center' });
+          }
+        },
+      });
+
+      // ── Footer ────────────────────────────────────────────────
+      const pageH = doc.internal.pageSize.getHeight();
+      doc.setDrawColor(226, 232, 240);
+      doc.setLineWidth(0.4);
+      doc.line(14, pageH - 12, 196, pageH - 12);
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(7.5);
+      doc.setTextColor(148, 163, 184);
+      doc.text('Generated by OJT Tracker', 14, pageH - 7);
+      doc.text(`Page 1`, 196, pageH - 7, { align: 'right' });
+
+      // ── Save ──────────────────────────────────────────────────
+      const safeName = userName.replace(/\s+/g, '_');
+      const today = new Date().toISOString().slice(0, 10);
+      doc.save(`DTR_${safeName}_${today}.pdf`);
+    })
+    .catch(() => {
+      const el = document.getElementById('dtr-status');
+      showAlert(el, 'Failed to export PDF. Please try again.', 'error');
+      setTimeout(() => el.classList.add('hidden'), 4000);
+    })
+    .finally(() => {
+      btn.disabled = false;
+      btn.innerHTML = `
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="12" y1="18" x2="12" y2="12"/>
+          <polyline points="9 15 12 18 15 15"/>
+        </svg>
+        Export PDF`;
+    });
+}

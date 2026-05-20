@@ -226,7 +226,18 @@
     <div class="card">
       <div class="card-header">
         <div class="card-title">Attendance History</div>
-        <span class="badge badge-muted" id="total-days-badge">0 days</span>
+        <div style="display:flex; align-items:center; gap:0.6rem;">
+          <span class="badge badge-muted" id="total-days-badge">0 days</span>
+          <button class="btn btn-primary btn-sm" id="export-pdf-btn" onclick="exportToPDF()" style="display:flex; align-items:center; gap:0.4rem; padding:0.35rem 0.8rem; font-size:0.8rem;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="12" y1="18" x2="12" y2="12"/>
+              <polyline points="9 15 12 18 15 15"/>
+            </svg>
+            Export PDF
+          </button>
+        </div>
       </div>
       <div class="table-wrap">
         <table class="table">
@@ -251,6 +262,8 @@
   </main>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/dtr.js"></script>
 <script>
