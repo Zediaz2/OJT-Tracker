@@ -19,9 +19,8 @@ foreach ($_FILES['images']['tmp_name'] as $key => $tmp) {
 
     if (move_uploaded_file($tmp, $dest)) {
         $path = 'uploads/' . $filename;
-        $stmt = $conn->prepare("INSERT INTO report_images (report_id, file_path) VALUES (?, ?)");
-        $stmt->bind_param("is", $report_id, $path);
-        $stmt->execute();
+        $stmt = $pdo->prepare("INSERT INTO report_images (report_id, file_path) VALUES (?, ?)");
+        $stmt->execute([$report_id, $path]);
         $uploaded[] = $path;
     }
 }

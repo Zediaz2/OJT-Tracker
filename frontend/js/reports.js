@@ -574,7 +574,7 @@ function confirmDeleteReport() {
 //  STI WEEKLY JOURNAL PDF GENERATOR
 // ════════════════════════════════════════════════════════
 function getProfile() {
-  const s = JSON.parse(localStorage.getItem('ojt_settings') || '{}');
+  const s = JSON.parse(localStorage.getItem(`ojt_settings_${user.id}`) || '{}');
   const nameParts = user.name.trim().split(/\s+/);
   const lastName  = nameParts.length > 1 ? nameParts[nameParts.length - 1] : user.name;
 
@@ -728,7 +728,7 @@ function buildSTIPage(report, reportNumber, totalReports, profile, logoBase64) {
 
 function buildPrintDocument(reports) {
   const profile    = getProfile();
-  const logoBase64 = localStorage.getItem('ojt_logo') || '';
+  const logoBase64 = localStorage.getItem(`ojt_logo_${user.id}`) || '';
   const pages      = reports.map((r, i) =>
     buildSTIPage(r, i + 1, reports.length, profile, logoBase64)
   ).join('');
@@ -934,7 +934,7 @@ body {
 .print-toolbar {
   position: fixed;
   top: 0; left: 0; right: 0;
-  background: #0f172a;
+  background: #171717;
   padding: 9px 24px;
   display: flex;
   align-items: center;
@@ -943,20 +943,20 @@ body {
   box-shadow: 0 2px 12px rgba(0,0,0,0.4);
 }
 .toolbar-title { font-size: 13px; font-weight: 700; color: #f1f5f9; }
-.toolbar-title span { color: #60a5fa; }
+.toolbar-title span { color: #a78bfa; }
 .toolbar-meta { font-size: 11px; color: #64748b; margin-left: 10px; }
 .btn-print {
   padding: 8px 22px;
-  background: #1d4ed8; color: #fff;
+  background: #7c3aed; color: #fff;
   border: none; border-radius: 6px;
   font-size: 13px; font-weight: 700;
   cursor: pointer; font-family: inherit;
 }
-.btn-print:hover { background: #1e40af; }
+.btn-print:hover { background: #6d28d9; }
 .btn-close {
   padding: 8px 16px;
   background: transparent; color: #64748b;
-  border: 1px solid #334155; border-radius: 6px;
+  border: 1px solid #404040; border-radius: 6px;
   font-size: 13px; cursor: pointer;
   font-family: inherit; margin-left: 8px;
 }

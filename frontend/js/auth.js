@@ -1,5 +1,13 @@
-// Base API URL — single declaration, used by all pages
-const API = 'http://localhost/OJT-Tracker/backend';
+// Base API URL — dynamically resolved so it works on localhost, 127.0.0.1, or any LAN IP/domain
+const API = (() => {
+  const origin = window.location.origin;
+  const path = window.location.pathname;
+  const frontendIdx = path.indexOf('/frontend');
+  if (frontendIdx !== -1) {
+    return origin + path.substring(0, frontendIdx) + '/backend';
+  }
+  return origin + '/backend';
+})();
 
 function getUser() {
   const u = localStorage.getItem('ojt_user');
@@ -22,7 +30,7 @@ function showAlert(el, msg, type) {
 }
 
 // Redirect to login if not authenticated (runs on all protected pages)
-if (!window.location.pathname.endsWith('index.html')) {
+if (!window.location.pathname.endsWith('index.html') && !window.location.pathname.endsWith('/')) {
   const user = getUser();
   if (!user) window.location.href = 'index.html';
 }

@@ -1,218 +1,232 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OJT Tracker — Sign In</title>
-  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
+
 <body>
-<div class="login-page">
+  <div class="login-page">
 
-  <!-- Branding Panel -->
-  <div class="login-brand">
-    <div class="brand-logo">OJT <span>Tracker</span></div>
-    <div class="brand-headline">Monitor Your<br/>Internship Progress</div>
-    <div class="brand-sub">A structured system for OJT students to track daily attendance, submit weekly reports, and document their internship journey.</div>
-    <div class="brand-features">
-      <div class="brand-feature"><div class="brand-dot"></div>Daily Time Record with automatic hour computation</div>
-      <div class="brand-feature"><div class="brand-dot"></div>Break-time deduction for accurate net hours</div>
-      <div class="brand-feature"><div class="brand-dot"></div>Weekly journal submissions with image attachments</div>
-    </div>
-  </div>
-
-  <!-- Form Panel -->
-  <div class="login-form-panel">
-    <div class="login-form-content">
-
-      <div class="auth-tabs">
-        <button class="auth-tab active" id="tab-login"    onclick="switchTab('login')">Sign In</button>
-        <button class="auth-tab"        id="tab-register" onclick="switchTab('register')">Create Account</button>
+    <!-- Branding Panel -->
+    <div class="login-brand">
+      <div class="brand-grid"></div>
+      <div class="brand-logo">
+        <div class="brand-logo-dot"></div>
+        OJT <span>Tracker</span>
       </div>
+      <div class="brand-headline">Monitor Your<br /><em>Internship Progress</em></div>
+      <div class="brand-sub">A structured system for OJT students to track daily attendance, submit weekly reports, and
+        document their internship journey.</div>
+      <div class="brand-features">
+        <div class="brand-feature">
+          <div class="brand-dot"></div>Daily Time Record with automatic hour computation
+        </div>
+        <div class="brand-feature">
+          <div class="brand-dot"></div>Break-time deduction for accurate net hours
+        </div>
+        <div class="brand-feature">
+          <div class="brand-dot"></div>Weekly journal submissions with image attachments
+        </div>
+      </div>
+    </div>
 
-      <div class="auth-panels">
+    <!-- Form Panel -->
+    <div class="login-form-panel">
+      <div class="login-form-content">
 
-        <!-- LOGIN -->
-        <div class="auth-panel active" id="panel-login">
-          <div class="form-title">Welcome back</div>
-          <div class="form-sub">Sign in to access your internship dashboard.</div>
-          <div class="auth-alert" id="login-alert"></div>
-          <div class="input-field">
-            <label>Email Address</label>
-            <input type="email" id="login-email" placeholder="your@email.com"
-              onkeydown="if(event.key==='Enter') loginUser()"/>
-          </div>
-          <div class="input-field">
-            <label>Password</label>
-            <input type="password" id="login-password" placeholder="Enter your password"
-              onkeydown="if(event.key==='Enter') loginUser()"/>
-          </div>
-          <button class="btn-auth" onclick="loginUser()">Sign In</button>
-          <div class="auth-divider">demo credentials</div>
-          <div class="demo-hint"><strong>juan@email.com</strong> &nbsp;/&nbsp; <strong>admin123</strong></div>
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Sign In</button>
+          <button class="auth-tab" id="tab-register" onclick="switchTab('register')">Create Account</button>
         </div>
 
-        <!-- REGISTER -->
-        <div class="auth-panel" id="panel-register">
-          <div class="form-title">Create your account</div>
-          <div class="form-sub">Register to start tracking your internship.</div>
-          <div class="auth-alert" id="register-alert"></div>
-          <div class="field-row">
+        <div class="auth-panels">
+
+          <!-- LOGIN -->
+          <div class="auth-panel active" id="panel-login">
+            <div class="form-title">Welcome back</div>
+            <div class="form-sub">Sign in to access your internship dashboard.</div>
+            <div class="auth-alert" id="login-alert"></div>
             <div class="input-field">
-              <label>Full Name</label>
-              <input type="text" id="reg-name" placeholder="Juan dela Cruz"/>
-            </div>
-            <div class="input-field">
-              <label>School</label>
-              <input type="text" id="reg-school" placeholder="e.g. PLM"/>
-            </div>
-          </div>
-          <div class="input-field">
-            <label>Company / Organization</label>
-            <input type="text" id="reg-company" placeholder="e.g. ABC Corporation"/>
-          </div>
-          <div class="input-field">
-            <label>Email Address</label>
-            <input type="email" id="reg-email" placeholder="your@email.com"/>
-          </div>
-          <div class="field-row">
-            <div class="input-field">
-              <label>Required Hours</label>
-              <input type="number" id="reg-hours" value="600" min="1" max="2000"/>
+              <label>Email Address</label>
+              <input type="email" id="login-email" placeholder="your@email.com"
+                onkeydown="if(event.key==='Enter') loginUser()" />
             </div>
             <div class="input-field">
               <label>Password</label>
-              <input type="password" id="reg-password" placeholder="Min. 6 characters"
-                oninput="checkStrength(this.value)"/>
+              <input type="password" id="login-password" placeholder="Enter your password"
+                onkeydown="if(event.key==='Enter') loginUser()" />
             </div>
+            <button class="btn-auth" onclick="loginUser()">Sign In</button>
+            <div class="auth-divider">demo credentials</div>
+            <div class="demo-hint"><strong>juan@email.com</strong> &nbsp;/&nbsp; <strong>admin123</strong></div>
           </div>
-          <div class="strength-bar">
-            <div class="strength-seg" id="str-1"></div>
-            <div class="strength-seg" id="str-2"></div>
-            <div class="strength-seg" id="str-3"></div>
-            <div class="strength-seg" id="str-4"></div>
-          </div>
-          <div class="strength-label" id="str-label">Enter a password</div>
-          <button class="btn-auth" onclick="registerUser()" style="margin-top:1rem;">Create Account</button>
-        </div>
 
+          <!-- REGISTER -->
+          <div class="auth-panel" id="panel-register">
+            <div class="form-title">Create your account</div>
+            <div class="form-sub">Register to start tracking your internship.</div>
+            <div class="auth-alert" id="register-alert"></div>
+            <div class="field-row">
+              <div class="input-field">
+                <label>Full Name</label>
+                <input type="text" id="reg-name" placeholder="Juan dela Cruz" />
+              </div>
+              <div class="input-field">
+                <label>School</label>
+                <input type="text" id="reg-school" placeholder="e.g. PLM" />
+              </div>
+            </div>
+            <div class="input-field">
+              <label>Company / Organization</label>
+              <input type="text" id="reg-company" placeholder="e.g. ABC Corporation" />
+            </div>
+            <div class="input-field">
+              <label>Email Address</label>
+              <input type="email" id="reg-email" placeholder="your@email.com" />
+            </div>
+            <div class="field-row">
+              <div class="input-field">
+                <label>Required Hours</label>
+                <input type="number" id="reg-hours" value="600" min="1" max="2000" />
+              </div>
+              <div class="input-field">
+                <label>Password</label>
+                <input type="password" id="reg-password" placeholder="Min. 6 characters"
+                  oninput="checkStrength(this.value)" />
+              </div>
+            </div>
+            <div class="strength-bar">
+              <div class="strength-seg" id="str-1"></div>
+              <div class="strength-seg" id="str-2"></div>
+              <div class="strength-seg" id="str-3"></div>
+              <div class="strength-seg" id="str-4"></div>
+            </div>
+            <div class="strength-label" id="str-label">Enter a password</div>
+            <button class="btn-auth" onclick="registerUser()" style="margin-top:1rem;">Create Account</button>
+          </div>
+
+        </div>
       </div>
+      <div class="auth-footer-bar">&copy; 2026 OJT Tracker &mdash; Powered by PHP &amp; SQLite</div>
     </div>
-    <div class="auth-footer-bar">&copy; 2025 OJT Tracker &mdash; Powered by PHP &amp; MySQL</div>
+
   </div>
 
-</div>
+  <script src="js/auth.js"></script>
+  <script>
+    function switchTab(tab) {
+      ['login', 'register'].forEach(t => {
+        document.getElementById(`panel-${t}`).classList.remove('active');
+        document.getElementById(`tab-${t}`).classList.remove('active');
+      });
+      document.getElementById(`panel-${tab}`).classList.add('active');
+      document.getElementById(`tab-${tab}`).classList.add('active');
+    }
 
-<script src="js/auth.js"></script>
-<script>
-  function switchTab(tab) {
-    ['login','register'].forEach(t => {
-      document.getElementById(`panel-${t}`).classList.remove('active');
-      document.getElementById(`tab-${t}`).classList.remove('active');
-    });
-    document.getElementById(`panel-${tab}`).classList.add('active');
-    document.getElementById(`tab-${tab}`).classList.add('active');
-  }
+    function authAlert(id, msg, type) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.className = `auth-alert ${type} show`;
+    }
+    function clearAlert(id) { document.getElementById(id).classList.remove('show'); }
 
-  function authAlert(id, msg, type) {
-    const el = document.getElementById(id);
-    el.textContent = msg;
-    el.className = `auth-alert ${type} show`;
-  }
-  function clearAlert(id) { document.getElementById(id).classList.remove('show'); }
+    function checkStrength(val) {
+      const segs = [1, 2, 3, 4].map(i => document.getElementById(`str-${i}`));
+      const label = document.getElementById('str-label');
+      segs.forEach(s => s.className = 'strength-seg');
+      if (!val) { label.textContent = 'Enter a password'; return; }
+      let score = 0;
+      if (val.length >= 6) score++;
+      if (val.length >= 10) score++;
+      if (/[A-Z]/.test(val) || /[0-9]/.test(val)) score++;
+      if (/[^A-Za-z0-9]/.test(val)) score++;
+      const levels = ['', 'weak', 'fair', 'good', 'strong'];
+      const labels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
+      for (let i = 0; i < score; i++) segs[i].classList.add(levels[score]);
+      label.textContent = labels[score] || 'Enter a password';
+    }
 
-  function checkStrength(val) {
-    const segs  = [1,2,3,4].map(i => document.getElementById(`str-${i}`));
-    const label = document.getElementById('str-label');
-    segs.forEach(s => s.className = 'strength-seg');
-    if (!val) { label.textContent = 'Enter a password'; return; }
-    let score = 0;
-    if (val.length >= 6)  score++;
-    if (val.length >= 10) score++;
-    if (/[A-Z]/.test(val) || /[0-9]/.test(val)) score++;
-    if (/[^A-Za-z0-9]/.test(val)) score++;
-    const levels = ['','weak','fair','good','strong'];
-    const labels = ['','Weak','Fair','Good','Strong'];
-    for (let i = 0; i < score; i++) segs[i].classList.add(levels[score]);
-    label.textContent = labels[score] || 'Enter a password';
-  }
+    function loginUser() {
+      clearAlert('login-alert');
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      if (!email || !password) { authAlert('login-alert', 'Please enter your email and password.', 'error'); return; }
 
-  function loginUser() {
-    clearAlert('login-alert');
-    const email    = document.getElementById('login-email').value.trim();
-    const password = document.getElementById('login-password').value;
-    if (!email || !password) { authAlert('login-alert', 'Please enter your email and password.', 'error'); return; }
+      const btn = document.querySelector('#panel-login .btn-auth');
+      btn.textContent = 'Signing in…';
+      btn.disabled = true;
 
-    const btn = document.querySelector('#panel-login .btn-auth');
-    btn.textContent = 'Signing in…';
-    btn.disabled = true;
+      fetch(`${API}/auth/login.php`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (data.success) {
+            localStorage.setItem('ojt_user', JSON.stringify(data.user));
+            authAlert('login-alert', '✓ Login successful. Redirecting…', 'success');
+            setTimeout(() => window.location.href = 'dashboard.html', 700);
+          } else {
+            authAlert('login-alert', data.error || 'Invalid credentials.', 'error');
+            btn.textContent = 'Sign In';
+            btn.disabled = false;
+          }
+        })
+        .catch(() => {
+          authAlert('login-alert', 'Unable to connect. Please check that XAMPP is running.', 'error');
+          btn.textContent = 'Sign In';
+          btn.disabled = false;
+        });
+    }
 
-    fetch(`${API}/auth/login.php`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    })
-    .then(r => r.json())
-    .then(data => {
-      if (data.success) {
-        localStorage.setItem('ojt_user', JSON.stringify(data.user));
-        authAlert('login-alert', '✓ Login successful. Redirecting…', 'success');
-        setTimeout(() => window.location.href = 'dashboard.html', 700);
-      } else {
-        authAlert('login-alert', data.error || 'Invalid credentials.', 'error');
-        btn.textContent = 'Sign In';
-        btn.disabled = false;
-      }
-    })
-    .catch(() => {
-      authAlert('login-alert', 'Unable to connect. Please check that XAMPP is running.', 'error');
-      btn.textContent = 'Sign In';
-      btn.disabled = false;
-    });
-  }
+    function registerUser() {
+      clearAlert('register-alert');
+      const name = document.getElementById('reg-name').value.trim();
+      const school = document.getElementById('reg-school').value.trim();
+      const company = document.getElementById('reg-company').value.trim();
+      const email = document.getElementById('reg-email').value.trim();
+      const hours = document.getElementById('reg-hours').value;
+      const password = document.getElementById('reg-password').value;
 
-  function registerUser() {
-    clearAlert('register-alert');
-    const name     = document.getElementById('reg-name').value.trim();
-    const school   = document.getElementById('reg-school').value.trim();
-    const company  = document.getElementById('reg-company').value.trim();
-    const email    = document.getElementById('reg-email').value.trim();
-    const hours    = document.getElementById('reg-hours').value;
-    const password = document.getElementById('reg-password').value;
+      if (!name || !email || !password || !company) { authAlert('register-alert', 'Please complete all required fields.', 'error'); return; }
+      if (password.length < 6) { authAlert('register-alert', 'Password must be at least 6 characters.', 'error'); return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { authAlert('register-alert', 'Please enter a valid email address.', 'error'); return; }
 
-    if (!name || !email || !password || !company) { authAlert('register-alert', 'Please complete all required fields.', 'error'); return; }
-    if (password.length < 6) { authAlert('register-alert', 'Password must be at least 6 characters.', 'error'); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { authAlert('register-alert', 'Please enter a valid email address.', 'error'); return; }
+      const btn = document.querySelector('#panel-register .btn-auth');
+      btn.textContent = 'Creating account…';
+      btn.disabled = true;
 
-    const btn = document.querySelector('#panel-register .btn-auth');
-    btn.textContent = 'Creating account…';
-    btn.disabled = true;
-
-    fetch(`${API}/auth/register.php`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, school, company, email, password, required_hours: hours || 600 })
-    })
-    .then(r => r.json())
-    .then(data => {
-      if (data.success) {
-        authAlert('register-alert', '✓ Account created. You may now sign in.', 'success');
-        setTimeout(() => {
-          switchTab('login');
-          document.getElementById('login-email').value = email;
+      fetch(`${API}/auth/register.php`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, school, company, email, password, required_hours: hours || 600 })
+      })
+        .then(r => r.json())
+        .then(data => {
+          if (data.success) {
+            authAlert('register-alert', '✓ Account created. You may now sign in.', 'success');
+            setTimeout(() => {
+              switchTab('login');
+              document.getElementById('login-email').value = email;
+              btn.textContent = 'Create Account';
+              btn.disabled = false;
+            }, 1200);
+          } else {
+            authAlert('register-alert', data.error, 'error');
+            btn.textContent = 'Create Account';
+            btn.disabled = false;
+          }
+        })
+        .catch(() => {
+          authAlert('register-alert', 'Unable to connect to server.', 'error');
           btn.textContent = 'Create Account';
           btn.disabled = false;
-        }, 1200);
-      } else {
-        authAlert('register-alert', data.error, 'error');
-        btn.textContent = 'Create Account';
-        btn.disabled = false;
-      }
-    })
-    .catch(() => {
-      authAlert('register-alert', 'Unable to connect to server.', 'error');
-      btn.textContent = 'Create Account';
-      btn.disabled = false;
-    });
-  }
-</script>
+        });
+    }
+  </script>
 </body>
+
 </html>

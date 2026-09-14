@@ -1,22 +1,15 @@
 <?php
 require_once '../config/db.php';
 
-// Handle preflight
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200); exit();
-}
-
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['error' => 'Invalid request']); exit;
 }
 
-// Read raw input
 $raw  = file_get_contents('php://input');
 $data = json_decode($raw, true);
 
-// Debug — remove after fixing
 if (!$data) {
-    echo json_encode(['error' => 'No JSON received', 'raw' => $raw]); exit;
+    echo json_encode(['error' => 'No JSON received']); exit;
 }
 
 $email    = trim($data['email'] ?? '');
@@ -26,24 +19,16 @@ if (!$email || !$password) {
     echo json_encode(['error' => 'Email and password are required']); exit;
 }
 
-$stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
-$stmt->bind_param("s", $email);
-$stmt->execute();
-$result = $stmt->get_result();
-$user   = $result->fetch_assoc();
+$stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+$stmt->execute([$email]);
+$user = $stmt->fetch();
 
-// Debug — shows exactly what's in DB
 if (!$user) {
     echo json_encode(['error' => 'No user found with that email']); exit;
 }
 
 if (!password_verify($password, $user['password'])) {
-    echo json_encode([
-        'error'          => 'Password does not match',
-        'entered'        => $password,
-        'hash_in_db'     => $user['password'],
-        'verify_result'  => password_verify($password, $user['password'])
-    ]); exit;
+    echo json_encode(['error' => 'Invalid password']); exit;
 }
 
 $_SESSION['user_id']   = $user['id'];

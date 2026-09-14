@@ -8,10 +8,10 @@
   <style>
     .settings-input {
       width: 100%;
-      padding: 0.62rem 0.9rem;
+      padding: 0.45rem 0.75rem;
       border: 1.5px solid var(--border);
       border-radius: var(--radius-sm);
-      font-size: 0.875rem;
+      font-size: 0.82rem;
       outline: none;
       font-family: inherit;
       transition: var(--transition);
@@ -29,18 +29,22 @@
       cursor: not-allowed;
     }
 
+    /* ── Compact Cards ── */
+    .settings-card { padding: 1rem 1.25rem; margin-bottom: 0.85rem; max-width: 720px; }
+    .settings-card .card-header { margin-bottom: 0.6rem; padding-bottom: 0.6rem; }
+
     /* ── Logo Upload ── */
     .logo-upload-wrap {
       display: flex;
-      align-items: flex-start;
-      gap: 1.5rem;
+      align-items: center;
+      gap: 1rem;
       flex-wrap: wrap;
     }
     .logo-preview-box {
-      width: 160px;
-      height: 90px;
+      width: 100px;
+      height: 56px;
       border: 1.5px dashed var(--border);
-      border-radius: var(--radius);
+      border-radius: var(--radius-sm);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -59,38 +63,38 @@
     .logo-preview-placeholder {
       text-align: center;
       color: var(--text-muted);
-      font-size: 0.75rem;
-      padding: 0.5rem;
-      line-height: 1.5;
+      font-size: 0.65rem;
+      padding: 0.35rem;
+      line-height: 1.4;
     }
     .logo-preview-placeholder span {
-      font-size: 1.5rem;
+      font-size: 1.1rem;
       display: block;
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.1rem;
       opacity: 0.3;
     }
     .logo-upload-controls {
       flex: 1;
-      min-width: 200px;
+      min-width: 180px;
     }
     .logo-upload-controls p {
-      font-size: 0.8rem;
+      font-size: 0.73rem;
       color: var(--text-muted);
-      line-height: 1.6;
-      margin-bottom: 0.75rem;
+      line-height: 1.5;
+      margin-bottom: 0.4rem;
     }
     .logo-btn-row {
       display: flex;
-      gap: 0.5rem;
+      gap: 0.4rem;
       flex-wrap: wrap;
     }
     .logo-remove-btn {
-      padding: 0.45rem 0.9rem;
+      padding: 0.3rem 0.7rem;
       background: #fef2f2;
       color: #dc2626;
       border: 1.5px solid #fecaca;
       border-radius: var(--radius-sm);
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 700;
       cursor: pointer;
       font-family: inherit;
@@ -99,13 +103,18 @@
     }
     .logo-remove-btn:hover { background: #fee2e2; }
     .logo-remove-btn.visible { display: inline-block; }
+
+    /* ── Compact form rows ── */
+    .settings-card .form-row { gap: 0.75rem; }
+    .settings-card .form-group { margin-bottom: 0.7rem; }
+    .settings-card .form-group label { margin-bottom: 0.25rem; font-size: 0.72rem; }
   </style>
 </head>
 <body>
 
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
 <div class="topbar">
-  <span class="topbar-logo">OJT <span style="color:#60a5fa;">Tracker</span></span>
+  <span class="topbar-logo">OJT <span style="color:var(--accent-400);">Tracker</span></span>
   <button class="hamburger" onclick="openSidebar()">&#9776;</button>
 </div>
 
@@ -158,14 +167,14 @@
     <div id="settings-status" class="alert hidden" style="max-width:720px;"></div>
 
     <!-- ══ OJT Configuration ══ -->
-    <div class="card" style="margin-bottom:1.25rem; max-width:720px;">
+    <div class="card settings-card">
       <div class="card-header">
         <div class="card-title">OJT Configuration</div>
       </div>
       <div class="settings-item">
         <div>
           <div class="settings-item-label">Company / Organization</div>
-          <div class="settings-item-desc">Host company where you are completing your internship.</div>
+          <div class="settings-item-desc">Host company for your internship.</div>
         </div>
         <div class="settings-item-control">
           <input type="text" id="set-company" placeholder="e.g. ABC Corporation" class="settings-input"/>
@@ -174,7 +183,7 @@
       <div class="settings-item">
         <div>
           <div class="settings-item-label">Department Assigned To</div>
-          <div class="settings-item-desc">Specific department or team within the host company.</div>
+          <div class="settings-item-desc">Department or team within the company.</div>
         </div>
         <div class="settings-item-control">
           <input type="text" id="set-department" placeholder="e.g. IT Department" class="settings-input"/>
@@ -183,7 +192,7 @@
       <div class="settings-item">
         <div>
           <div class="settings-item-label">Required OJT Hours</div>
-          <div class="settings-item-desc">Total hours required to complete your internship program.</div>
+          <div class="settings-item-desc">Total hours to complete your program.</div>
         </div>
         <div class="settings-item-control">
           <input type="number" id="set-hours" placeholder="e.g. 600" min="1" max="2000" class="settings-input"/>
@@ -192,35 +201,31 @@
     </div>
 
     <!-- ══ Weekly Journal Profile ══ -->
-    <div class="card" style="margin-bottom:1.25rem; max-width:720px;">
+    <div class="card settings-card">
       <div class="card-header">
         <div class="card-title">Weekly Journal Profile</div>
-        <span class="badge badge-primary">Used for PDF Export</span>
+        <span class="badge badge-primary">PDF Export</span>
       </div>
-      <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:1.5rem; line-height:1.6;">
-        These details auto-fill the <strong>Weekly Journal Template</strong> on every PDF export. Fill them in once and never worry about formatting again.
-      </p>
 
       <!-- Logo Upload -->
-      <div style="margin-bottom:1.5rem; padding-bottom:1.5rem; border-bottom:1px solid var(--border-light);">
-        <div style="font-size:0.77rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-secondary); margin-bottom:0.75rem;">
+      <div style="margin-bottom:0.75rem; padding-bottom:0.75rem; border-bottom:1px solid var(--border-light);">
+        <div style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-secondary); margin-bottom:0.5rem;">
           School / Organization Logo
         </div>
         <div class="logo-upload-wrap">
           <div class="logo-preview-box" id="logo-preview-box" onclick="document.getElementById('logo-file-input').click()" style="cursor:pointer;" title="Click to upload logo">
             <div class="logo-preview-placeholder" id="logo-placeholder">
               <span>🏫</span>
-              Click to upload
+              Upload
             </div>
             <img id="logo-preview-img" src="" alt="Logo preview" style="display:none;"/>
           </div>
           <div class="logo-upload-controls">
-            <p>Upload your school or organization logo. It will appear in the top-left of the <strong>Weekly Journal Template</strong> header when exporting to PDF.</p>
-            <p style="margin-top:0.25rem;">Accepted formats: <strong>JPG, PNG, WEBP, GIF</strong>. Recommended size: at least <strong>200×80px</strong>.</p>
+            <p>Appears in the PDF header. Formats: <strong>JPG, PNG, WEBP, GIF</strong> · Min <strong>200×80px</strong>.</p>
             <input type="file" id="logo-file-input" accept=".jpg,.jpeg,.png,.webp,.gif" style="display:none;" onchange="handleLogoUpload(this)"/>
             <div class="logo-btn-row">
               <button class="btn btn-outline btn-sm" onclick="document.getElementById('logo-file-input').click()">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 Choose Logo
               </button>
               <button class="logo-remove-btn" id="logo-remove-btn" onclick="removeLogo()">✕ Remove</button>
@@ -264,21 +269,20 @@
       </div>
 
       <!-- Template Title Override -->
-      <div class="form-group" style="margin-top:0.25rem;">
-        <label>Journal Template Title <span style="text-transform:none; font-weight:500; color:var(--text-muted); letter-spacing:0;">(shown in header)</span></label>
+      <div class="form-group" style="margin-top:0; margin-bottom:0;">
+        <label>Journal Template Title <span style="text-transform:none; font-weight:500; color:var(--text-muted); letter-spacing:0;">(header)</span></label>
         <input type="text" id="set-template-title" placeholder="e.g. WEEKLY JOURNAL TEMPLATE" class="settings-input" style="width:100%;"/>
       </div>
     </div>
 
     <!-- ══ Profile Information (read-only) ══ -->
-    <div class="card" style="margin-bottom:1.5rem; max-width:720px;">
+    <div class="card settings-card">
       <div class="card-header">
         <div class="card-title">Profile Information</div>
       </div>
       <div class="settings-item">
         <div>
           <div class="settings-item-label">Full Name</div>
-          <div class="settings-item-desc">Your registered name.</div>
         </div>
         <div class="settings-item-control">
           <input type="text" id="set-name" disabled class="settings-input settings-input-disabled"/>
@@ -287,7 +291,6 @@
       <div class="settings-item">
         <div>
           <div class="settings-item-label">Email Address</div>
-          <div class="settings-item-desc">Used to authenticate your account.</div>
         </div>
         <div class="settings-item-control">
           <input type="email" id="set-email" disabled class="settings-input settings-input-disabled"/>
@@ -295,7 +298,7 @@
       </div>
     </div>
 
-    <button class="btn btn-primary btn-lg" onclick="saveSettings()">Save Changes</button>
+    <button class="btn btn-primary" onclick="saveSettings()" style="max-width:720px;">Save Changes</button>
   </main>
 </div>
 
@@ -305,7 +308,11 @@
   document.getElementById('sidebar-name').textContent   = user.name;
   document.getElementById('sidebar-avatar').textContent = user.name.charAt(0).toUpperCase();
 
-  const s = JSON.parse(localStorage.getItem('ojt_settings') || '{}');
+  // User-scoped localStorage keys so each user has isolated settings
+  const SETTINGS_KEY = `ojt_settings_${user.id}`;
+  const LOGO_KEY     = `ojt_logo_${user.id}`;
+
+  const s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
 
   // Restore saved field values
   document.getElementById('set-company').value        = s.company        || user.company || '';
@@ -322,7 +329,7 @@
   document.getElementById('set-email').value          = user.email;
 
   // Restore saved logo
-  const savedLogo = localStorage.getItem('ojt_logo');
+  const savedLogo = localStorage.getItem(LOGO_KEY);
   if (savedLogo) showLogoPreview(savedLogo);
 
   // ── Logo Handling ──
@@ -340,7 +347,7 @@
     const reader = new FileReader();
     reader.onload = function(e) {
       const base64 = e.target.result;
-      localStorage.setItem('ojt_logo', base64);
+      localStorage.setItem(LOGO_KEY, base64);
       showLogoPreview(base64);
     };
     reader.readAsDataURL(file);
@@ -362,7 +369,7 @@
   }
 
   function removeLogo() {
-    localStorage.removeItem('ojt_logo');
+    localStorage.removeItem(LOGO_KEY);
     document.getElementById('logo-preview-img').style.display = 'none';
     document.getElementById('logo-preview-img').src = '';
     document.getElementById('logo-placeholder').style.display = 'block';
@@ -393,7 +400,7 @@
       showAlert(statusEl, 'Company and Required Hours are required.', 'error'); return;
     }
 
-    localStorage.setItem('ojt_settings', JSON.stringify({
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify({
       company, required_hours: hours, department,
       campus, program, year_level, section, supervisor, mi, template_title
     }));

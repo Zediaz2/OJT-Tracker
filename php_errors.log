@@ -1,0 +1,4 @@
+[14-Sep-2026 21:34:48 Asia/Manila] PHP Warning:  Undefined array key "REQUEST_METHOD" in C:\xampp\htdocs\OJT-Tracker\backend\config\db.php on line 84
+[14-Sep-2026 21:34:48 Asia/Manila] PHP Warning:  Undefined array key "password_hash" in C:\xampp\htdocs\OJT-Tracker\backend\test_check.php on line 8
+[14-Sep-2026 21:34:48 Asia/Manila] PHP Deprecated:  password_verify(): Passing null to parameter #2 ($hash) of type string is deprecated in C:\xampp\htdocs\OJT-Tracker\backend\test_check.php on line 8
+[14-Sep-2026 21:35:08 Asia/Manila] PHP Warning:  Undefined array key "REQUEST_METHOD" in C:\xampp\htdocs\OJT-Tracker\backend\config\db.php on line 84
