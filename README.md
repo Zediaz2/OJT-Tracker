@@ -326,4 +326,5 @@ Defined once in `frontend/js/auth.js`:
 const API = 'http://localhost/OJT-Tracker/backend';
 ```
 
-All pages import `auth.js` first and reference `API` for every `fetch()` call.
+All pages import `auth.js` first and reference `API` for every `fetch()` call.#   O J T - T r a c k e r  
+ 
